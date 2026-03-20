@@ -1,0 +1,218 @@
+import org.gradle.api.file.RelativePath
+import java.util.Locale
+
+plugins {
+    id 'net.neoforged.moddev' version '1.0.11'
+    id 'maven-publish'
+}
+
+version =minecraft_version + "-" + mod_version + "-" + tag_lanzador
+group = group
+
+base {
+    archivesName = mod_name 
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'build/generated/resources'
+            srcDir layout.buildDirectory.dir('generated/roostAssets')
+        }
+    }
+}
+
+def roostTextureSourceDir = layout.projectDirectory.dir('roost/src/main/resources/assets/roost/textures/blocks')
+def generatedRoostDir = layout.buildDirectory.dir('generated/roostAssets')
+def additionalAssetsDir = layout.projectDirectory.dir('AdditionalAssets/chickens/textures')
+
+tasks.register('generateRoostTextures', Copy) {
+    onlyIf { roostTextureSourceDir.asFile.exists() }
+    from(roostTextureSourceDir) {
+        include 'curtain_empty.png', 'curtain_side.png', 'hay_floor.png', 'hay_side.png', 'plain_face.png', 'slat_side.png'
+        include 'chicken/*.png'
+        into 'assets/chickens/textures/block'
+    }
+    into generatedRoostDir
+    includeEmptyDirs = false
+}
+
+tasks.named('processResources') {
+    notCompatibleWithConfigurationCache("Resource remapping mutates RelativePath instances at execution time")
+    dependsOn 'generateRoostTextures'
+    from('OriginalChickens/src/main/resources')
+    from('MoreChickens/src/main/resources/assets/morechickens/textures/entity') {
+        into 'assets/chickens/textures/entity'
+    }
+    def extraEntityTextures = additionalAssetsDir.dir('entity').asFile
+    if (extraEntityTextures.exists()) {
+        from(extraEntityTextures) {
+            into 'assets/chickens/textures/entity'
+        }
+    }
+    def extraItemTextures = additionalAssetsDir.dir('item').asFile
+    if (extraItemTextures.exists()) {
+        from(extraItemTextures) {
+            into 'assets/chickens/textures/item'
+        }
+    }
+    def extraGuiTextures = additionalAssetsDir.dir('gui').asFile
+    if (extraGuiTextures.exists()) {
+        from(extraGuiTextures) {
+            into 'assets/chickens/textures/gui'
+        }
+    }
+    from('roost/src/main/resources/assets/roost/textures/gui') {
+        include 'jei.png'
+        into 'assets/chickens/textures/gui'
+    }
+    from('OriginalChickens/src/main/resources/assets/chickens/textures/entity') {
+        include 'WaterChicken.png'
+        into 'assets/chickens/textures/entity'
+        rename { 'pshard_chicken.png' }
+    }
+    from('OriginalChickens/src/main/resources/assets/chickens/textures/entity') {
+        include 'GlassChicken.png'
+        into 'assets/chickens/textures/entity'
+        rename { 'pcrystal_chicken.png' }
+    }
+    from('OriginalChickens/src/main/resources/assets/chickens/textures/entity') {
+        include 'SandChicken.png'
+        into 'assets/chickens/textures/entity'
+        rename { 'soulsand_chicken.png' }
+    }
+    from('OriginalChickens/src/main/resources/assets/chickens/textures/entity') {
+        include 'CoalChicken.png'
+        into 'assets/chickens/textures/entity'
+        rename { 'obsidian_chicken.png' }
+    }
+    from(generatedRoostDir)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    eachFile { details ->
+        def segments = details.relativePath.segments.clone()
+        if (segments.length >= 4) {
+            if (segments[3] == 'blocks') {
+                segments[3] = 'block'
+                details.relativePath = new RelativePath(details.relativePath.isFile(), segments)
+            } else if (segments[3] == 'items') {
+                segments[3] = 'item'
+                details.relativePath = new RelativePath(details.relativePath.isFile(), segments)
+            }
+        }
+        if (details.relativePath.pathString.startsWith('assets/chickens/textures/entity/') && details.name.endsWith('.png')) {
+            segments = details.relativePath.segments.clone()
+            segments[segments.length - 1] = details.name.toLowerCase(Locale.ROOT)
+            details.relativePath = new RelativePath(details.relativePath.isFile(), segments)
+        }
+    }
+    filesMatching('assets/chickens/models/**/*.json') {
+        filter { line ->
+            line.replace('chickens:blocks/', 'chickens:block/').replace('chickens:items/', 'chickens:item/')
+        }
+    }
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+        minecraft_version: minecraft_version,
+        neoforge_version: neoforge_version,
+        loader_version_range: loader_version_range,
+        mod_id: mod_id,
+        mod_name: mod_name,
+        mod_named: mod_name,
+        mod_license: mod_license,
+        mod_version: mod_version,
+        mod_authors: mod_authors,
+        mod_description: mod_description,
+        issues: issues,
+        file: [jarVersion: project.version],
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties 
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url = 'https://maven.neoforged.net/releases' }
+    maven { url = 'https://maven.blamejared.com' }
+    maven {
+        url = 'https://maven2.bai.lol'
+        content {
+            includeGroup 'lol.bai'
+            includeGroup 'mcp.mobius.waila'
+        }
+    }
+    maven {
+        url = 'https://api.modrinth.com/maven'
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+     maven {
+        name = "Curse Maven"
+        url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+     maven {
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
+}
+
+dependencies {
+    // JEI
+    // implementation "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // WTHIT API 
+    compileOnly "mcp.mobius.waila:wthit-api:neo-${project.wthit_version}"
+    
+    // Jade 
+    compileOnly "maven.modrinth:jade:${project.jade_version}"
+    
+    // AlmostUnified 
+   implementation "curse.maven:almost-unified-633823:${au_version}"
+}
+
+neoForge {
+    version = project.neoforge_version
+    addModdingDependenciesTo(sourceSets.main)
+    runs {
+        client { client() }
+        server { server() }
+        data {
+            data()
+            programArguments.addAll("--mod", "chickens")
+        }
+    }
+    mods {
+        modernchickens {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
