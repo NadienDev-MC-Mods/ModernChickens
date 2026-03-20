@@ -1,2 +1,0 @@
-# FluidCows
-Cows with fluid!

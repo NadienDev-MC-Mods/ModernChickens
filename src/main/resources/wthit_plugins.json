@@ -1,5 +1,0 @@
-{
-  "chickens:wthit": {
-    "initializer": "com.setycz.chickens.integration.wthit.ChickensWthitPlugin"
-  }
-}
