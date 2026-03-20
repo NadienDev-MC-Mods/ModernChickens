@@ -71,18 +71,22 @@ public final class AvianDousingCategory implements IRecipeCategory<ChickensJeiRe
     public void draw(ChickensJeiRecipeTypes.AvianDousingRecipe recipe, IRecipeSlotsView recipeSlotsView,
             GuiGraphics graphics, double mouseX, double mouseY) {
         Component input = Component.translatable("gui.chickens.avian_dousing_machine.input");
-        // Resolve the displayed reagent name based on the recipe type (chemical, liquid, or special item).
-        Component reagentName = recipe.entry() != null
+        // Null guard: datapacks or fallback item recipes may omit a chemical entry; show a placeholder instead of crashing.
+        Component chemicalName = recipe.entry() != null
                 ? recipe.entry().getDisplayName()
-                : recipe.fluid() != null
-                    ? recipe.fluid().getHoverName()
-                    : recipe.reagent().getHoverName();
-        Component reagent = Component.translatable("gui.chickens.avian_dousing_machine.chemical", reagentName);
-        Component volume = Component.translatable("gui.chickens.avian_dousing_machine.volume", recipe.fluidCost());
-        Component energy = Component.translatable("gui.chickens.avian_dousing_machine.energy", recipe.energyCost());
+                : recipe.reagent().getHoverName();
+        String chemicalId = recipe.entry() != null
+                ? recipe.entry().getChemicalId().toString()
+                : "missing";
+        Component chemical = Component.translatable("gui.chickens.avian_dousing_machine.chemical",
+                chemicalName, chemicalId);
+        Component volume = Component.translatable("gui.chickens.avian_dousing_machine.volume",
+                AvianDousingMachineBlockEntity.CHEMICAL_COST);
+        Component energy = Component.translatable("gui.chickens.avian_dousing_machine.energy",
+                AvianDousingMachineBlockEntity.CHEMICAL_ENERGY_COST);
         int textColor = 0xFF7F7F7F;
         graphics.drawString(Minecraft.getInstance().font, input, 4, 4, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, reagent, 4, 16, textColor, false);
+        graphics.drawString(Minecraft.getInstance().font, chemical, 4, 16, textColor, false);
         graphics.drawString(Minecraft.getInstance().font, volume, 4, 28, textColor, false);
         graphics.drawString(Minecraft.getInstance().font, energy, 4, 40, textColor, false);
     }

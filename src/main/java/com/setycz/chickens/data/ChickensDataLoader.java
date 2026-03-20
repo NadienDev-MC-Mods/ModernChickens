@@ -2,6 +2,7 @@ package com.setycz.chickens.data;
 
 import com.setycz.chickens.ChemicalEggRegistry;
 import com.setycz.chickens.ChemicalEggRegistryItem;
+import com.setycz.chickens.ChickensRegistry;
 import com.setycz.chickens.ChickensRegistryItem;
 import com.setycz.chickens.LiquidEggRegistry;
 import com.setycz.chickens.LiquidEggRegistryItem;
@@ -46,10 +47,10 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * Handles external configuration for non-chicken settings and registry bootstrap.
- * Chicken definitions themselves are supplied by KubeJS, while the modern release
- * still honours legacy {@code chickens.cfg} and {@code chickens.properties} for
- * general (non-chicken) tuning so existing packs upgrade without losing tweaks.
+ * Handles the external configuration that drives chicken definitions.
+ * The modern release stores everything in a Forge-style {@code chickens.cfg}
+ * file, but still honours the old {@code chickens.properties} if it is found
+ * so existing packs upgrade without losing their tweaks.
  */
 public final class ChickensDataLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger("ChickensData");
@@ -81,32 +82,44 @@ public final class ChickensDataLoader {
     public static void bootstrap() {
         ensureDefaultConfig();
         Properties props = loadLegacyProperties();
-        // KubeJS owns chicken definitions; only import general settings from chickens.cfg.
         LegacyConfigBridge.importIfPresent(props, List.of());
 
-        ChickensConfigValues values = readGeneralSettings(props);
-        ChickensConfigHolder.set(values);
-
-        if (values.isFluidChickensEnabled()) {
+        ChickensConfigValues preview = readGeneralSettings(props);
+        if (preview.isFluidChickensEnabled()) {
             registerLiquidEggs();
         } else {
             LOGGER.info("Skipping fluid egg registration because general.enableFluidChickens is false");
         }
-        if (values.isChemicalChickensEnabled()) {
+        if (preview.isChemicalChickensEnabled()) {
             registerChemicalEggs();
         } else {
             LOGGER.info("Skipping chemical egg registration because general.enableChemicalChickens is false");
         }
-        if (values.isGasChickensEnabled()) {
+        if (preview.isGasChickensEnabled()) {
             registerGasEggs();
         } else {
             LOGGER.info("Skipping gas egg registration because general.enableGasChickens is false");
         }
-        // Persist only the non-chicken-specific settings back to the legacy cfg.
-        LegacyConfigBridge.export(props, List.of(), values);
 
-        LOGGER.info("KubeJS chicken registry ready; awaiting script registration.");
+        // Allow external JSON definitions to extend the in-memory list before
+        // configuration overrides are resolved.
+        List<ChickensRegistryItem> defaults = DefaultChickens.create();
+        LegacyConfigBridge.importIfPresent(props, defaults);
+        CustomChickensLoader.load(defaults);
+        ChickensConfigValues values = applyConfiguration(props, defaults);
+        ChickensConfigHolder.set(values);
+        defaults.forEach(ChickensRegistry::register);
+
+        LOGGER.info("Loaded {} chickens ({} enabled, {} disabled)",
+                defaults.size(),
+                ChickensRegistry.getItems().size(),
+                ChickensRegistry.getDisabledItems().size());
+
         ChickensSpawnManager.refreshFromRegistry();
+
+        // Export the breeding graph during bootstrap so tooling retains the
+        // legacy log output without waiting for command invocation.
+        BreedingGraphExporter.export(ChickensRegistry.getItems());
     }
 
     private static void registerLiquidEggs() {
@@ -800,7 +813,11 @@ public final class ChickensDataLoader {
     public static void onTagsUpdated(TagsUpdatedEvent event) {
         if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD
                 || event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
-            // Rebuild spawn plans on tag reloads while leaving chicken data to KubeJS.
+            ModdedChickens.retryPending();
+            DynamicMaterialChickens.refresh();
+            DynamicFluidChickens.refresh();
+            DynamicChemicalChickens.refresh();
+            DynamicGasChickens.refresh();
             ChickensSpawnManager.refreshFromRegistry();
         }
     }
