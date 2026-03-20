@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.setycz.chickens.integration.almostunified.AlmostUnifiedCompat;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -331,23 +332,26 @@ final class ModdedChickens {
                 "IronChicken", "CoalChicken", null));
 
         list.add(new Definition(520, "siliconchicken", "basemetals/silicon_chicken",
-                combine(tag("forge:silicon", "c:silicon"),
+                combine(tag("c:silicon"),
                         oreTag("gems", "silicon"),
                         oreTag("dusts", "silicon")),
                 0x5f706b, 0x424242, SpawnType.NONE,
-                "ClayChicken", "SandChicken", null));
+                "ClayChicken", "SandChicken",
+                tagDrop("c:silicon", "c:gems/silicon", "c:dusts/silicon")));
 
         list.add(new Definition(521, "sulfurchicken", "basemetals/sulfur_chicken",
                 combine(oreTag("dusts", "sulfur"),
                         oreTag("gems", "sulfur")),
                 0xffe782, 0xad9326, SpawnType.NONE,
-                "GunpowderChicken", "FlintChicken", null));
+                "GunpowderChicken", "FlintChicken",
+                tagDrop("c:dusts/sulfur", "c:gems/sulfur")));
 
         list.add(new Definition(522, "saltpeterchicken", "basemetals/saltpeter_chicken",
                 combine(oreTag("dusts", "saltpeter"),
                         oreTag("dusts", "niter")),
                 0xddd6d6, 0xac9e9d, SpawnType.NONE,
-                "sulfurchicken", "RedstoneChicken", null));
+                "sulfurchicken", "RedstoneChicken",
+                tagDrop("c:dusts/saltpeter", "c:dusts/niter")));
 
         list.add(new Definition(523, "brasschicken", "basemetals/brass_chicken",
                 oreTag("ingots", "brass"),
@@ -372,8 +376,7 @@ final class ModdedChickens {
 
         // Mekanism
         list.add(new Definition(527, "osmiumChicken", "mekanism/osmium_chicken",
-                combine(oreTag("ingots", "osmium"),
-                        item("mekanism:ingot_osmium")),
+                oreTag("ingots", "osmium"),
                 0x989585, 0xd1ccb6, SpawnType.NONE,
                 "IronChicken", "QuartzChicken", null));
 
@@ -713,7 +716,7 @@ final class ModdedChickens {
 
         // Additional late-game mod resources and gaps in default coverage
         list.add(new Definition(600, "neutroniumChicken", "avaritia/neutronium_chicken",
-                item("avaritia:neutron_pile"),
+                item("avaritia:neutron_ingot"),
                 0xa6a6b4, 0x5f6173, SpawnType.NONE,
                 "witherChicken", "DiamondChicken", null));
 
@@ -774,7 +777,39 @@ final class ModdedChickens {
                 0xcc0000, 0xff6666, SpawnType.NONE,
                 "RedstoneChicken", "QuartzChicken", null));
 
+        list.add(new Definition(612, "prometheumChicken", "immersive_engineering/uranium_chicken",
+                item("oritech:prometheum_ingot"),
+                0x91d76d, 0x9ce26c, SpawnType.NONE,
+                "witherchicken", "EnderChicken", null));
+
+        list.add(new Definition(613, "entroDustChicken", "extended_ae/entro_chicken",
+                item("extendedae:entro_dust"),
+                0x2c1f40, 0x7d62b8, SpawnType.NONE,
+                "entroChicken", "certusQuartzChicken", null));
+
         return list;
+    }
+
+
+    /**
+     * Creates a drop supplier that resolves the preferred item for the given tag.
+     * <p>
+     * If AlmostUnified is present, its mod-priority config is respected so the
+     * "winning" item matches whatever AU would unify recipes to.
+     * Falls back to the first item found in the tag otherwise.
+     *
+     * @param tagNames one or more tag names tried in order (e.g. "c:ingots/copper", "forge:ingots/copper")
+     */
+    private static Supplier<Optional<ItemStack>> tagDrop(String... tagNames) {
+        return () -> {
+            for (String tagName : tagNames) {
+                Optional<ItemStack> resolved = AlmostUnifiedCompat.resolvePreferred(tagName);
+                if (resolved.isPresent()) {
+                    return resolved;
+                }
+            }
+            return Optional.empty();
+        };
     }
 
     private static Supplier<Optional<ItemStack>> oreTag(String category, String material) {
