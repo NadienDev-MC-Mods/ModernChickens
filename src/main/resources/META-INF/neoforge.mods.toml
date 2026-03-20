@@ -24,3 +24,10 @@ type = "required"
 versionRange="${minecraft_version}"
 ordering="NONE"
 sides="BOTH"
+
+[[dependencies.chickens]]
+modId="kubejs"
+mandatory=false
+versionRange="[2101.7.2-build.336,)"
+ordering="AFTER"
+sides="BOTH"
