@@ -1,27 +1,28 @@
 modLoader="javafml"
-loaderVersion="[4,)"
-license="MIT"
-issueTrackerURL="https://example.com"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="${issues}"
 # Keep the built-in textures active by default; NeoForge ignores pack.mcmeta's default flags.
 showAsResourcePack=false
 
 [[mods]]
-modId="chickens"
-version="${file.jarVersion}"
-displayName="Modern Chickens"
-description='''
-Modernized port of the classic Chickens mod for Minecraft 1.21.1.'''
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_named}"
+description="${mod_description}"
 
-[[dependencies.chickens]]
+[[dependencies.${mod_id}]]
 modId="neoforge"
-mandatory=true
-versionRange="[21.1.0,)"
+type = "required"
+versionRange="${neoforge_version}"
 ordering="NONE"
 sides="BOTH"
 
-[[dependencies.chickens]]
+[[dependencies.${mod_id}]]
 modId="minecraft"
-mandatory=true
-versionRange="[1.21.1,1.22)"
+type = "required"
+versionRange="${minecraft_version}"
 ordering="NONE"
 sides="BOTH"
+
+

@@ -6,8 +6,12 @@ plugins {
     id 'maven-publish'
 }
 
-version = '1.6.4'
-group = 'com.setycz.chickens'
+version =minecraft_version + "-" + mod_version + "-" + tag_lanzador
+group = group
+
+base {
+    archivesName = mod_name 
+}
 
 java {
     toolchain {
@@ -38,25 +42,6 @@ tasks.register('generateRoostTextures', Copy) {
     }
     into generatedRoostDir
     includeEmptyDirs = false
-}
-
-repositories {
-    mavenCentral()
-    maven { url = 'https://maven.neoforged.net/releases' }
-    maven { url = 'https://maven.blamejared.com' }
-    maven {
-        url = 'https://maven2.bai.lol'
-        content {
-            includeGroup 'lol.bai'
-            includeGroup 'mcp.mobius.waila'
-        }
-    }
-    maven {
-        url = 'https://api.modrinth.com/maven'
-        content {
-            includeGroup 'maven.modrinth'
-        }
-    }
 }
 
 tasks.named('processResources') {
@@ -110,10 +95,6 @@ tasks.named('processResources') {
     }
     from(generatedRoostDir)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    inputs.property('modVersion', version)
-    filesMatching('META-INF/neoforge.mods.toml') {
-        expand('file': ['jarVersion': project.version])
-    }
     eachFile { details ->
         def segments = details.relativePath.segments.clone()
         if (segments.length >= 4) {
@@ -138,13 +119,75 @@ tasks.named('processResources') {
     }
 }
 
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+        minecraft_version: minecraft_version,
+        neoforge_version: neoforge_version,
+        loader_version_range: loader_version_range,
+        mod_id: mod_id,
+        mod_name: mod_name,
+        mod_named: mod_name,
+        mod_license: mod_license,
+        mod_version: mod_version,
+        mod_authors: mod_authors,
+        mod_description: mod_description,
+        issues: issues,
+        file: [jarVersion: project.version],
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties 
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url = 'https://maven.neoforged.net/releases' }
+    maven { url = 'https://maven.blamejared.com' }
+    maven {
+        url = 'https://maven2.bai.lol'
+        content {
+            includeGroup 'lol.bai'
+            includeGroup 'mcp.mobius.waila'
+        }
+    }
+    maven {
+        url = 'https://api.modrinth.com/maven'
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+     maven {
+        name = "Curse Maven"
+        url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+     maven {
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
+}
+
 dependencies {
-    // Hook into JEI so the modernised recipe categories can render in-game guidance.
-    implementation "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
-    // Compile against the WTHIT API without bundling the overlay implementation.
+    // JEI
+    // implementation "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // WTHIT API 
     compileOnly "mcp.mobius.waila:wthit-api:neo-${project.wthit_version}"
-    // Jade client overlay (compileOnly keeps the dependency optional)
+    
+    // Jade 
     compileOnly "maven.modrinth:jade:${project.jade_version}"
+    
+    // AlmostUnified 
+   implementation "curse.maven:almost-unified-633823:${au_version}"
 }
 
 neoForge {
@@ -154,9 +197,9 @@ neoForge {
         client { client() }
         server { server() }
         data {
-        data()
-        programArguments.addAll("--mod", "chickens")
-    }
+            data()
+            programArguments.addAll("--mod", "chickens")
+        }
     }
     mods {
         modernchickens {
@@ -164,6 +207,7 @@ neoForge {
         }
     }
 }
+
 
 publishing {
     publications {
