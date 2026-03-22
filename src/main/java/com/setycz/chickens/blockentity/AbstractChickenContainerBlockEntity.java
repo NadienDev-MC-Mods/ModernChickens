@@ -71,7 +71,8 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
 
 
         public int getAddedTime(ItemStack stack) {
-            return Math.max(0, stack.getCount()) * Math.max(stats.growth(), 1);
+            int raw = Math.max(0, stack.getCount()) * Math.max(stats.growth(), 1);
+            return Math.min(raw, 2048);
         }
 
         public int getLayTime(RandomSource random) {
@@ -191,11 +192,16 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
                 spawnChickenItem(level.random);
             }
             resetTimer(level);
+            timeElapsed = 0;
         }
     }
 
     private void updateProgress() {
-        progress = timeUntilNextDrop == 0 ? 0 : Math.min(1000, timeElapsed * 1000 / Math.max(timeUntilNextDrop, 1));
+        int newProgress = timeUntilNextDrop == 0 ? 0 : Math.min(1000, timeElapsed * 1000 / Math.max(timeUntilNextDrop, 1));
+        if (newProgress != progress) {
+            progress = newProgress;
+            setChanged();
+        }
     }
 
     private int getTimeElapsed() {
@@ -224,15 +230,20 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
     private void resetTimer(Level level) {
         timeElapsed = 0;
         timeUntilNextDrop = 0;
-        RandomSource random = level.random;
-        for (ChickenContainerEntry entry : chickenData) {
-            if (entry != null) {
-                timeUntilNextDrop = Math.max(timeUntilNextDrop, entry.getLayTime(random));
+        int fixedTarget = getTargetCycleTicks();
+        if (fixedTarget > 0) {
+            // Use the tier-aware fixed duration instead of the generic formula.
+            timeUntilNextDrop = fixedTarget;
+        } else {
+            RandomSource random = level.random;
+            for (ChickenContainerEntry entry : chickenData) {
+                if (entry != null) {
+                    timeUntilNextDrop = Math.max(timeUntilNextDrop, entry.getLayTime(random));
+                }
             }
+            double multiplier = Math.max(speedMultiplier(), 0.0001D);
+            timeUntilNextDrop = (int) (timeUntilNextDrop / multiplier);
         }
-//        chic
-        double multiplier = Math.max(speedMultiplier(), 0.0001D);
-        timeUntilNextDrop = (int) (timeUntilNextDrop / multiplier);
         setChanged();
     }
 
@@ -245,6 +256,16 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
     protected abstract int requiredSeedsForDrop();
 
     protected abstract double speedMultiplier();
+
+    /**
+     * Optional override to set a fixed cycle duration in ticks.
+     * When this returns a value > 0 it takes precedence over the
+     * speedMultiplier + getLayTime calculation in resetTimer.
+     * Return 0 to use the default behaviour.
+     */
+    protected int getTargetCycleTicks() {
+        return 0;
+    }
 
     protected abstract int getChickenSlotCount();
 
@@ -383,7 +404,7 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
         return stack.getCount() >= required;
     }
 
-    private boolean outputIsFull() {
+    protected boolean outputIsFull() {
         int start = getOutputSlotIndex();
         for (int slot = start; slot < items.size(); slot++) {
             ItemStack stack = items.get(slot);
@@ -563,6 +584,7 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
         ContainerHelper.saveAllItems(tag, items, registries);
         tag.putInt("TimeUntilNextDrop", timeUntilNextDrop);
         tag.putInt("TimeElapsed", timeElapsed);
+        tag.putInt("Progress", progress);
     }
 
     @Override
@@ -571,6 +593,7 @@ public abstract class AbstractChickenContainerBlockEntity extends BlockEntity im
         ContainerHelper.loadAllItems(tag, items, registries);
         timeUntilNextDrop = tag.getInt("TimeUntilNextDrop");
         timeElapsed = tag.getInt("TimeElapsed");
+        progress = tag.getInt("Progress");
         skipNextTimerReset = true;
         markChickenDataDirty();
     }

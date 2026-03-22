@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.setycz.chickens.integration.almostunified.AlmostUnifiedCompat;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -335,19 +336,22 @@ final class ModdedChickens {
                         oreTag("gems", "silicon"),
                         oreTag("dusts", "silicon")),
                 0x5f706b, 0x424242, SpawnType.NONE,
-                "ClayChicken", "SandChicken", null));
+                "ClayChicken", "SandChicken",
+                tagDrop("c:silicon", "c:gems/silicon", "c:dusts/silicon")));
 
         list.add(new Definition(521, "sulfurchicken", "basemetals/sulfur_chicken",
                 combine(oreTag("dusts", "sulfur"),
                         oreTag("gems", "sulfur")),
                 0xffe782, 0xad9326, SpawnType.NONE,
-                "GunpowderChicken", "FlintChicken", null));
+                "GunpowderChicken", "FlintChicken",
+                tagDrop("c:dusts/sulfur", "c:gems/sulfur")));
 
         list.add(new Definition(522, "saltpeterchicken", "basemetals/saltpeter_chicken",
                 combine(oreTag("dusts", "saltpeter"),
                         oreTag("dusts", "niter")),
                 0xddd6d6, 0xac9e9d, SpawnType.NONE,
-                "sulfurchicken", "RedstoneChicken", null));
+                "sulfurchicken", "RedstoneChicken",
+                tagDrop("c:dusts/saltpeter", "c:dusts/niter")));
 
         list.add(new Definition(523, "brasschicken", "basemetals/brass_chicken",
                 oreTag("ingots", "brass"),
@@ -782,8 +786,43 @@ final class ModdedChickens {
                 item("extendedae:entro_dust"),
                 0x2c1f40, 0x7d62b8, SpawnType.NONE,
                 "entroChicken", "certusQuartzChicken", null));
+        list.add(new Definition(614, "nadieniteChicken", "ultimatefoods/nadienite_ingot_chicken",
+                item("ultimatefoods:nadienite_ingot"),
+                0x1f402c, 0x62ff7d, SpawnType.NONE,
+                "witherchicken", "NetheriteChicken", null));
+        list.add(new Definition(615, "superpoopChicken", "ultimatefoods/superpoop_chicken",
+                item("ultimatefoods:superpoop"),
+                0x1f402c, 0x62ff7d, SpawnType.NONE,
+                "StringChicken", "BrownChicken", null));
+        list.add(new Definition(616, "steelchckennChicken", "ultimatefoods/steelchckenn_chicken",
+                item("ultimatefoods:steel_ingot"),
+                0x1f402c, 0x62ff7d, SpawnType.NONE,
+                "CoalChicken", "LogChicken", null));
+
 
         return list;
+    }
+
+
+    /**
+     * Creates a drop supplier that resolves the preferred item for the given tag.
+     * <p>
+     * If AlmostUnified is present, its mod-priority config is respected so the
+     * "winning" item matches whatever AU would unify recipes to.
+     * Falls back to the first item found in the tag otherwise.
+     *
+     * @param tagNames one or more tag names tried in order (e.g. "c:ingots/copper", "forge:ingots/copper")
+     */
+    private static Supplier<Optional<ItemStack>> tagDrop(String... tagNames) {
+        return () -> {
+            for (String tagName : tagNames) {
+                Optional<ItemStack> resolved = AlmostUnifiedCompat.resolvePreferred(tagName);
+                if (resolved.isPresent()) {
+                    return resolved;
+                }
+            }
+            return Optional.empty();
+        };
     }
 
     private static Supplier<Optional<ItemStack>> oreTag(String category, String material) {

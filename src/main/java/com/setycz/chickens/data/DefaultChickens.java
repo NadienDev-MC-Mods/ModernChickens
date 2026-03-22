@@ -292,6 +292,81 @@ public final class DefaultChickens {
                 slimeChicken, blazeChicken);
         chickens.add(magmaChicken);
 
+
+        // ── Wood Log Chickens ──────────────────────────────────────────────────────
+        // Each wood type follows the LogChicken definition: same texture pattern,
+        // parents are LogChicken + the dye chicken that matches the wood's hue.
+
+        ChickensRegistryItem spruceLogChicken = new ChickensRegistryItem(
+                700, "SpruceLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.SPRUCE_LOG),
+                0x6b4f2a, 0x3d2b15,
+                logChicken, brownChicken);
+        chickens.add(spruceLogChicken);
+
+        ChickensRegistryItem birchLogChicken = new ChickensRegistryItem(
+                701, "BirchLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.BIRCH_LOG),
+                0xe8ddb5, 0xc8b87c,
+                logChicken, whiteChicken);
+        chickens.add(birchLogChicken);
+
+        ChickensRegistryItem jungleLogChicken = new ChickensRegistryItem(
+                702, "JungleLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.JUNGLE_LOG),
+                0x7a5c2e, 0x4a3010,
+                logChicken, brownChicken);
+        chickens.add(jungleLogChicken);
+
+        ChickensRegistryItem acaciaLogChicken = new ChickensRegistryItem(
+                703, "AcaciaLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.ACACIA_LOG),
+                0xba6430, 0x7a3210,
+                logChicken, redChicken);
+        chickens.add(acaciaLogChicken);
+
+        ChickensRegistryItem darkOakLogChicken = new ChickensRegistryItem(
+                704, "DarkOakLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.DARK_OAK_LOG),
+                0x3b2910, 0x1e1408,
+                logChicken, blackChicken);
+        chickens.add(darkOakLogChicken);
+
+        ChickensRegistryItem mangroveLogChicken = new ChickensRegistryItem(
+                705, "MangroveLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.MANGROVE_LOG),
+                0x7a2020, 0x4a1010,
+                logChicken, redChicken);
+        chickens.add(mangroveLogChicken);
+
+        ChickensRegistryItem cherryLogChicken = new ChickensRegistryItem(
+                706, "CherryLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.CHERRY_LOG),
+                0xd9a0a0, 0xb06060,
+                logChicken, pinkChicken);
+        chickens.add(cherryLogChicken);
+
+        ChickensRegistryItem bambooBlockChicken = new ChickensRegistryItem(
+                707, "BambooBlockChicken", texture("LogChicken"),
+                new ItemStack(Blocks.BAMBOO_BLOCK),
+                0x7a9a3a, 0x4a6a1a,
+                logChicken, greenChicken);
+        chickens.add(bambooBlockChicken);
+
+        ChickensRegistryItem crimsonStemChicken = new ChickensRegistryItem(
+                708, "CrimsonStemChicken", texture("LogChicken"),
+                new ItemStack(Blocks.CRIMSON_STEM),
+                0x7a1040, 0x4a0820,
+                logChicken, purpleChicken).setSpawnType(SpawnType.HELL);
+        chickens.add(crimsonStemChicken);
+
+        ChickensRegistryItem warpedStemChicken = new ChickensRegistryItem(
+                709, "WarpedStemChicken", texture("LogChicken"),
+                new ItemStack(Blocks.WARPED_STEM),
+                0x1a7a6a, 0x0a4a3a,
+                logChicken, greenChicken).setSpawnType(SpawnType.HELL);
+        chickens.add(warpedStemChicken);
+
         Map<String, ChickensRegistryItem> byName = new HashMap<>();
         for (ChickensRegistryItem chicken : chickens) {
             byName.put(chicken.getEntityName().toLowerCase(Locale.ROOT), chicken);
@@ -302,8 +377,8 @@ public final class DefaultChickens {
 
         // is after the modded chickens since it relies on a chicken registered in there
         ChickensRegistryItem netheriteChicken = new ChickensRegistryItem(
-                306, "NetheriteChicken", texture("NetheriteChicken"),
-                new ItemStack(Items.ANCIENT_DEBRIS),
+                306, "NetheriteChicken", texture("netheritechicken"),
+                new ItemStack(Items.NETHERITE_INGOT),
                 0xd6d4d4, 0x31292a,
                 witherChicken, blazeChicken).setLayCoefficient(0.25f);
         chickens.add(netheriteChicken);

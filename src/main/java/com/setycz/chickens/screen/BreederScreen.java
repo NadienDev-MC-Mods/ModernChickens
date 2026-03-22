@@ -60,7 +60,7 @@ public class BreederScreen extends AbstractContainerScreen<BreederMenu> {
         }
         BreederBlockEntity breeder = this.menu.getBreeder();
         int progress = this.menu.getProgress();
-        int percent = Math.min(100, progress / 10);
+        int percent = Math.min(100, progress * 100 / 1000);
         if (breeder.getItem(BreederBlockEntity.SEED_SLOT).isEmpty()) {
             graphics.renderTooltip(this.font, Component.translatable("container.chickens.breeder.no_seeds"), mouseX, mouseY);
         } else {

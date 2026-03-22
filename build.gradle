@@ -125,8 +125,7 @@ tasks.withType(ProcessResources).configureEach {
         neoforge_version: neoforge_version,
         loader_version_range: loader_version_range,
         mod_id: mod_id,
-        mod_name: mod_name,
-        mod_named: mod_name,
+        mod_named: mod_named,
         mod_license: mod_license,
         mod_version: mod_version,
         mod_authors: mod_authors,
@@ -188,6 +187,9 @@ dependencies {
     
     // AlmostUnified 
    implementation "curse.maven:almost-unified-633823:${au_version}"
+
+   //ultimate foods 
+   implementation "curse.maven:ultimate-foods-1455067:${ultimatefoods_version}"
 }
 
 neoForge {

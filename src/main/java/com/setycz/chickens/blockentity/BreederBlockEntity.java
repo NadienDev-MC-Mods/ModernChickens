@@ -67,10 +67,18 @@ public class BreederBlockEntity extends AbstractChickenContainerBlockEntity {
         }
         ItemStack stack = new ItemStack(ModRegistry.CHICKEN_ITEM.get());
         ChickenItemHelper.copyFromEntity(stack, child);
+        // Discard the temporary entity immediately — it was only created in memory
+        // to resolve breed offspring stats and must never be added to the world.
+        child.discard();
+        parentA.discard();
+        parentB.discard();
+        // Only produce if there is room in the output slots.
+        // Never drop to the floor when full — just skip this cycle.
+        if (outputIsFull()) {
+            return;
+        }
         ItemStack remaining = pushIntoOutput(stack);
-        if (!remaining.isEmpty()) {
-            Containers.dropItemStack(serverLevel, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), remaining);
-        } else {
+        if (remaining.isEmpty()) {
             playSpawnEffects(serverLevel);
         }
     }
@@ -111,6 +119,30 @@ public class BreederBlockEntity extends AbstractChickenContainerBlockEntity {
     @Override
     protected double speedMultiplier() {
         return ChickensConfigHolder.get().getBreederSpeedMultiplier();
+    }
+
+    /**
+     * Returns the target ticks for one breeding cycle based on the average
+     * tier of the two parents:
+     *   Tier 1 → 60 ticks  (~3 s)
+     *   Tier 2 → 40 ticks  (~2 s)
+     *   Tier 3+ → 20 ticks (~1 s)
+     */
+    @Override
+    protected int getTargetCycleTicks() {
+        com.setycz.chickens.ChickensRegistryItem left = com.setycz.chickens.item.ChickenItemHelper.resolve(getItem(LEFT_CHICKEN_SLOT));
+        com.setycz.chickens.ChickensRegistryItem right = com.setycz.chickens.item.ChickenItemHelper.resolve(getItem(RIGHT_CHICKEN_SLOT));
+        int tier = 1;
+        if (left != null && right != null) {
+            tier = Math.max(left.getTier(), right.getTier());
+        } else if (left != null) {
+            tier = left.getTier();
+        } else if (right != null) {
+            tier = right.getTier();
+        }
+        if (tier <= 1) return 60;
+        if (tier == 2) return 40;
+        return 20;
     }
 
     @Override
