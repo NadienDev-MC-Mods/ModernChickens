@@ -332,7 +332,7 @@ final class ModdedChickens {
                 "IronChicken", "CoalChicken", null));
 
         list.add(new Definition(520, "siliconchicken", "basemetals/silicon_chicken",
-                combine(tag("c:silicon"),
+                combine(tag("forge:silicon", "c:silicon"),
                         oreTag("gems", "silicon"),
                         oreTag("dusts", "silicon")),
                 0x5f706b, 0x424242, SpawnType.NONE,
@@ -376,7 +376,8 @@ final class ModdedChickens {
 
         // Mekanism
         list.add(new Definition(527, "osmiumChicken", "mekanism/osmium_chicken",
-                oreTag("ingots", "osmium"),
+                combine(oreTag("ingots", "osmium"),
+                        item("mekanism:ingot_osmium")),
                 0x989585, 0xd1ccb6, SpawnType.NONE,
                 "IronChicken", "QuartzChicken", null));
 
@@ -716,7 +717,7 @@ final class ModdedChickens {
 
         // Additional late-game mod resources and gaps in default coverage
         list.add(new Definition(600, "neutroniumChicken", "avaritia/neutronium_chicken",
-                item("avaritia:neutron_ingot"),
+                item("avaritia:neutron_pile"),
                 0xa6a6b4, 0x5f6173, SpawnType.NONE,
                 "witherChicken", "DiamondChicken", null));
 
