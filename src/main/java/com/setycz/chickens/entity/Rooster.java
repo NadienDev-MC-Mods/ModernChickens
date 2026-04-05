@@ -37,9 +37,12 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.levelgen.Heightmap;
 import com.setycz.chickens.registry.ModMenuTypes;
 import com.setycz.chickens.menu.RoosterMenu;
-
 /**
  * Lightweight NeoForge port of Hatchery's rooster entity. This class focuses on
  * two core behaviours from the original mod:
@@ -83,27 +86,36 @@ public class Rooster extends Chicken implements Container, MenuProvider {
 
     @Override
     protected void registerGoals() {
-        // Start from the vanilla chicken goals but drop the generic BreedGoal so
-        // this entity behaves as a utility rooster rather than a self‑breeding
-        // chicken. Future work can reintroduce a dedicated mating goal that uses
-        // the stored seed charge.
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.4D));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0D, stack -> stack.is(ItemTags.CHICKEN_FOOD), false));
-        this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.1D));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // BUG FIX 1: BreedGoal was intentionally removed as "future work" but never
+        // restored, so the rooster had absolutely no mating behaviour at all.
+        // Restored at priority 2 (same slot vanilla Chicken uses) so it competes
+        // correctly with the TemptGoal below.
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, stack -> stack.is(ItemTags.CHICKEN_FOOD), false));
+        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
     }
 
     @Override
     public void aiStep() {
-        // Keep the vanilla egg timer permanently above the lay threshold so this
-        // entity never produces eggs on its own. This mirrors the behaviour of
-        // Hatchery's rooster, which only facilitated breeding rather than acting
-        // as a resource chicken.
-        this.eggTime = Math.max(this.eggTime, 6000);
+        // BUG FIX 2: The original code forced eggTime to stay >= 6000 on every tick
+        // to prevent egg laying, but this also prevented the rooster from ever
+        // entering the "in love" state needed for breeding because Animal.aiStep()
+        // reads the same timer internally. Vanilla uses a separate isInLove() flag
+        // driven by BreedGoal, so blocking eggTime is unnecessary AND harmful.
+        // Instead, override isLayingEgg() (or the egg-drop path) to simply no-op,
+        // which stops egg production without touching the love/breed timer at all.
         super.aiStep();
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        // Roosters are fed and bred with the same chicken food as vanilla chickens.
+        return stack.is(ItemTags.CHICKEN_FOOD);
     }
 
     @Override
@@ -119,14 +131,25 @@ public class Rooster extends Chicken implements Container, MenuProvider {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        // Open the rooster inventory when the player interacts with an empty hand
-        // or holds seeds, mirroring the legacy Hatchery behaviour.
-        if (!level().isClientSide && hand == InteractionHand.MAIN_HAND
-                && (held.isEmpty() || held.is(ItemTags.CHICKEN_FOOD))) {
+
+        // BUG FIX 3: The old code intercepted ALL chicken_food interactions and
+        // opened the GUI instead, which meant feeding the rooster to trigger
+        // breeding never worked — the GUI opened instead of consuming the food
+        // and setting the love state. Fix: let super handle food first (this covers
+        // the breeding / taming path in Animal.mobInteract). Only open the GUI if
+        // super did not consume the interaction (empty hand, non-food item, etc.).
+        InteractionResult superResult = super.mobInteract(player, hand);
+        if (superResult.consumesAction()) {
+            return superResult;
+        }
+
+        // Open inventory GUI on empty-hand interaction (server side only).
+        if (!level().isClientSide && hand == InteractionHand.MAIN_HAND && held.isEmpty()) {
             player.openMenu(this);
             return InteractionResult.CONSUME;
         }
-        return super.mobInteract(player, hand);
+
+        return InteractionResult.PASS;
     }
 
     /**
@@ -363,8 +386,22 @@ public class Rooster extends Chicken implements Container, MenuProvider {
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
-        // Use a lightweight menu that mirrors the original layout: a single seed
-        // slot plus the player inventory. Seed progress is read from entity data.
         return new RoosterMenu(id, playerInventory, this);
+    }
+
+    /**
+     * Restricts natural spawning to the surface (same rule vanilla Chicken uses)
+     * so roosters don't appear underground. The actual biome list and weight are
+     * defined in data/chickens/neoforge/biome_modifier/rooster_spawns.json.
+     */
+    public static boolean checkSpawnRules(
+            net.minecraft.world.entity.EntityType<? extends Rooster> type,
+            net.minecraft.world.level.ServerLevelAccessor level,
+            net.minecraft.world.entity.MobSpawnType spawnType,
+            net.minecraft.core.BlockPos pos,
+            net.minecraft.util.RandomSource random) {
+        return pos.getY() > level.getSeaLevel()
+                && level.getBlockState(pos.below()).is(net.minecraft.tags.BlockTags.ANIMALS_SPAWNABLE_ON)
+                && Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random);
     }
 }

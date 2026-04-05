@@ -47,6 +47,8 @@ public final class ChickensConfigValues {
     private final int incubatorEnergyCost;
     private final int incubatorEnergyCapacity;
     private final int incubatorEnergyMaxReceive;
+    /** Fixed drop count applied to every roost production tick, regardless of tier. */
+    private final int dropCount;
 
     public ChickensConfigValues(int spawnProbability, int minBroodSize, int maxBroodSize,
             float netherSpawnChanceMultiplier, float overworldSpawnChance,
@@ -61,7 +63,8 @@ public final class ChickensConfigValues {
             int avianChemicalCapacity, int avianChemicalTransferRate, boolean avianChemicalEffectsEnabled,
             boolean liquidEggHazardsEnabled, boolean fluidChickensEnabled,
             boolean chemicalChickensEnabled, boolean gasChickensEnabled, int incubatorEnergyCost,
-            int incubatorEnergyCapacity, int incubatorEnergyMaxReceive) {
+            int incubatorEnergyCapacity, int incubatorEnergyMaxReceive,
+            int dropCount) {
         this.spawnProbability = spawnProbability;
         this.minBroodSize = minBroodSize;
         this.maxBroodSize = maxBroodSize;
@@ -96,6 +99,7 @@ public final class ChickensConfigValues {
         this.incubatorEnergyCost = incubatorEnergyCost;
         this.incubatorEnergyCapacity = incubatorEnergyCapacity;
         this.incubatorEnergyMaxReceive = incubatorEnergyMaxReceive;
+        this.dropCount = dropCount;
     }
 
     public int getSpawnProbability() {
@@ -249,5 +253,13 @@ public final class ChickensConfigValues {
 
     public int getIncubatorEnergyMaxReceive() {
         return incubatorEnergyMaxReceive;
+    }
+
+    /**
+     * Returns the configured drop count applied to every roost production tick.
+     * This value is the same regardless of the chicken's tier.
+     */
+    public int getDropCount() {
+        return dropCount;
     }
 }

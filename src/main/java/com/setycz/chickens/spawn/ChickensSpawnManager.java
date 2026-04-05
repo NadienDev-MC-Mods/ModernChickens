@@ -35,6 +35,8 @@ public final class ChickensSpawnManager {
     private static final double OVERWORLD_ENERGY = 0.32D;
     private static final double NETHER_CHARGE = 0.18D;
     private static final double NETHER_ENERGY = 0.45D;
+    /** Fixed spawn weight for roosters — roughly 5 % of overworld animal spawns. */
+    private static final int ROOSTER_WEIGHT = 5;
 
     private static final Map<SpawnType, SpawnPlan> PLANS = new EnumMap<>(SpawnType.class);
 
@@ -49,7 +51,8 @@ public final class ChickensSpawnManager {
         ChickensConfigValues config = ChickensConfigHolder.get();
         Map<SpawnType, SpawnPlan> rebuilt = new EnumMap<>(SpawnType.class);
         for (SpawnType spawnType : SpawnType.values()) {
-            if (spawnType == SpawnType.NONE) {
+            // NONE has no spawning. ROOSTER is handled separately below.
+            if (spawnType == SpawnType.NONE || spawnType == SpawnType.ROOSTER) {
                 continue;
             }
             List<ChickensRegistryItem> candidates = ChickensRegistry.getPossibleChickensToSpawn(spawnType);
@@ -107,6 +110,31 @@ public final class ChickensSpawnManager {
                     WeightedRandomList.create(weighted)));
         }
 
+        // Rooster spawn plan: fixed weight of 5 in plains/forest/savanna/desert.
+        // Uses its own EntityType so the game spawns a Rooster, not a mod chicken.
+        // minCount=1 / maxCount=2 mirrors vanilla chicken group sizes.
+        {
+            float debugMultiplier = ChickensSpawnDebug.getSpawnWeightMultiplier();
+            int roosterWeight = Math.round(ROOSTER_WEIGHT * debugMultiplier);
+            var override = SpawnPlanDataLoader.getOverride(SpawnType.ROOSTER);
+            if (override.isPresent()) {
+                roosterWeight = override.get().applyWeight(roosterWeight);
+            }
+            if (roosterWeight > 0) {
+                MobSpawnSettings.SpawnerData roosterSpawner = new MobSpawnSettings.SpawnerData(
+                        ModEntityTypes.ROOSTER.get(),
+                        roosterWeight,
+                        1,
+                        2);
+                rebuilt.put(SpawnType.ROOSTER, new SpawnPlan(
+                        SpawnType.ROOSTER,
+                        roosterSpawner,
+                        OVERWORLD_CHARGE,
+                        OVERWORLD_ENERGY,
+                        WeightedRandomList.create()));
+            }
+        }
+
         PLANS.clear();
         PLANS.putAll(rebuilt);
         LOGGER.debug("Spawn tables rebuilt: {}", PLANS.keySet());
@@ -120,6 +148,10 @@ public final class ChickensSpawnManager {
             weight = Math.round(weight * SNOW_WEIGHT_MODIFIER);
         } else if (type == SpawnType.END) {
             weight = Math.round(weight * END_WEIGHT_MODIFIER);
+        } else if (type == SpawnType.ROOSTER) {
+            // Rooster weight is fixed — this path should not be reached from the
+            // chicken loop, but guard it anyway to avoid returning a chicken weight.
+            return ROOSTER_WEIGHT;
         }
         return weight;
     }

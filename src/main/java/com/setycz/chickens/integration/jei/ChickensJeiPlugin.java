@@ -75,9 +75,9 @@ public class ChickensJeiPlugin implements IModPlugin {
             if (chicken == null) {
                 return IIngredientSubtypeInterpreter.NONE;
             }
-            ChickenStats stats = ChickenItemHelper.getStats(stack);
-            return String.format("%d/%d/%d/%d/%s", chicken.getId(), stats.gain(), stats.growth(), stats.strength(),
-                    stats.analysed());
+            // Use only the chicken type id for recipe matching so that chickens
+            // with different gain/growth/strength stats still match the same recipe.
+            return String.valueOf(chicken.getId());
         });
     }
 
@@ -149,24 +149,35 @@ public class ChickensJeiPlugin implements IModPlugin {
     }
 
     private static List<ChickensJeiRecipeTypes.DropRecipe> buildDropRecipes() {
-        return ChickensRegistry.getItems().stream()
-                .filter(ChickensRegistryItem::isEnabled)
-                .map(chicken -> new ChickensJeiRecipeTypes.DropRecipe(
-                        ChickensSpawnEggItem.createFor(chicken),
-                        chicken.createDropItem()))
-                .filter(drop -> !drop.drop().isEmpty())
-                .toList();
+        ChickenItem chickenItem = (ChickenItem) ModRegistry.CHICKEN_ITEM.get();
+        int dropCount = Math.max(1, ChickensConfigHolder.get().getDropCount());
+        List<ChickensJeiRecipeTypes.DropRecipe> recipes = new ArrayList<>();
+        for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
+            if (!chicken.isEnabled()) continue;
+            ItemStack drop = chicken.createDropItem();
+            if (drop.isEmpty()) continue;
+            ItemStack chickenStack = chickenItem.createFor(chicken);
+            ItemStack tierDrop = drop.copy();
+            tierDrop.setCount(dropCount);
+            recipes.add(new ChickensJeiRecipeTypes.DropRecipe(chickenStack, tierDrop));
+        }
+        return recipes;
     }
 
     private static List<ChickensJeiRecipeTypes.BreedingRecipe> buildBreedingRecipes() {
-        return ChickensRegistry.getItems().stream()
-                .filter(chicken -> chicken.isEnabled() && chicken.isBreedable())
-                .map(chicken -> new ChickensJeiRecipeTypes.BreedingRecipe(
-                        ChickensSpawnEggItem.createFor(chicken.getParent1()),
-                        ChickensSpawnEggItem.createFor(chicken.getParent2()),
-                        ChickensSpawnEggItem.createFor(chicken),
-                        Math.round(ChickensRegistry.getChildChance(chicken))))
-                .toList();
+        ChickenItem chickenItem = (ChickenItem) ModRegistry.CHICKEN_ITEM.get();
+        List<ChickensJeiRecipeTypes.BreedingRecipe> recipes = new ArrayList<>();
+        for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
+            if (!chicken.isEnabled() || !chicken.isBreedable()) {
+                continue;
+            }
+            int chance = Math.round(ChickensRegistry.getChildChance(chicken));
+            ItemStack parent1 = chickenItem.createFor(chicken.getParent1());
+            ItemStack parent2 = chickenItem.createFor(chicken.getParent2());
+            ItemStack child = chickenItem.createFor(chicken);
+            recipes.add(new ChickensJeiRecipeTypes.BreedingRecipe(parent1, parent2, child, chance));
+        }
+        return recipes;
     }
 
     private static List<ChickensJeiRecipeTypes.ThrowingRecipe> buildThrowingRecipes() {
@@ -186,15 +197,19 @@ public class ChickensJeiPlugin implements IModPlugin {
 
     private static List<ChickensJeiRecipeTypes.RoostingRecipe> buildRoostingRecipes() {
         ChickenItem chickenItem = (ChickenItem) ModRegistry.CHICKEN_ITEM.get();
-        return ChickensRegistry.getItems().stream()
-                .filter(ChickensRegistryItem::isEnabled)
-                .map(chicken -> {
-                    ItemStack stack = chickenItem.createFor(chicken);
-                    stack.setCount(16);
-                    ItemStack drop = chicken.createDropItem();
-                    return new ChickensJeiRecipeTypes.RoostingRecipe(stack, drop, stack.getCount());
-                })
-                .toList();
+        int dropCount = Math.max(1, ChickensConfigHolder.get().getDropCount());
+        List<ChickensJeiRecipeTypes.RoostingRecipe> recipes = new ArrayList<>();
+        for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
+            if (!chicken.isEnabled()) continue;
+            ItemStack drop = chicken.createDropItem();
+            if (drop.isEmpty()) continue;
+            ItemStack chickenStack = chickenItem.createFor(chicken);
+            chickenStack.setCount(16);
+            ItemStack tierDrop = drop.copy();
+            tierDrop.setCount(dropCount);
+            recipes.add(new ChickensJeiRecipeTypes.RoostingRecipe(chickenStack, tierDrop, 16));
+        }
+        return recipes;
     }
 
     private static List<ChickensJeiRecipeTypes.IncubatorRecipe> buildIncubatorRecipes() {

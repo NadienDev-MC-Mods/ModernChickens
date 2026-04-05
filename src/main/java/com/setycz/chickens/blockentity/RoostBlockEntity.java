@@ -211,6 +211,8 @@ public class RoostBlockEntity extends AbstractChickenContainerBlockEntity {
         tag.putInt("ChickenCount", stack.getCount());
         ChickenStats stats = ChickenItemHelper.getStats(stack);
         tag.putInt("Gain", stats.gain());
+        tag.putInt("Growth", stats.growth());
+        tag.putInt("Strength", stats.strength());
     }
 
     @Override
@@ -220,7 +222,9 @@ public class RoostBlockEntity extends AbstractChickenContainerBlockEntity {
             if (chicken != null) {
                 int chickens = data.getInt("ChickenCount");
                 int gain = data.getInt("Gain");
-                int dropCount = gain >= 10 ? 3 : gain >= 5 ? 2 : 1;
+                int growth = data.getInt("Growth");
+                int strength = data.getInt("Strength");
+                int dropCount = ChickensConfigHolder.get().getDropCount();
                 ItemStack drop = chicken.createDropItem();
                 drop.setCount(dropCount);
                 tooltip.add(Component.translatable("tooltip.chickens.roost.summary", chicken.getDisplayName(), chickens,

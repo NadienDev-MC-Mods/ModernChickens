@@ -450,11 +450,17 @@ public final class ChickensDataLoader {
             chicken.setLayItem(layItem);
 
             ItemStack defaultDrop = chicken.createDropItem();
+            // Force the persisted default count to 64 when the key is absent so
+            // new installs get the intended stack size.  Existing configs that
+            // already have a value keep whatever was written there.
+            if (props.getProperty(prefix + "dropCount") == null) {
+                props.setProperty(prefix + "dropCount", "64");
+            }
             ItemStack dropItem = readItemStack(props,
                     prefix + "dropItem",
                     prefix + "dropCount",
                     prefix + "dropType",
-                    defaultDrop);
+                    defaultDrop.isEmpty() ? defaultDrop : new ItemStack(defaultDrop.getItem(), 64));
             chicken.setDropItem(dropItem);
 
             String parent1 = readString(props, prefix + "parent1", chicken.getParent1() != null ? chicken.getParent1().getEntityName() : "");
@@ -694,6 +700,8 @@ public final class ChickensDataLoader {
                 readInt(props, "general.incubatorMaxReceive", 4_000), 1);
         int incubatorEnergyCost = ensurePositive(props, "general.incubatorEnergyCost",
                 readInt(props, "general.incubatorEnergyCost", 10_000), 1);
+        int dropCount = ensurePositive(props, "general.roostDropCount",
+                readInt(props, "general.roostDropCount", 64), 1);
         return new ChickensConfigValues(spawnProbability, minBroodSize, maxBroodSize, multiplier,
                 overworldChance, netherChance, endChance, alwaysShowStats,
                 roostSpeed, breederSpeed, roosterAuraMultiplier, roosterAuraRange,
@@ -704,7 +712,8 @@ public final class ChickensDataLoader {
                 avianChemicalCapacity, avianChemicalTransfer, avianChemicalEffects,
                 liquidEggHazards,
                 fluidChickensEnabled, chemicalChickensEnabled, gasChickensEnabled, incubatorEnergyCost,
-                incubatorCapacity, incubatorMaxReceive);
+                incubatorCapacity, incubatorMaxReceive,
+                dropCount);
     }
 
     private static String readString(Properties props, String key, String defaultValue) {

@@ -9,6 +9,7 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -57,12 +58,20 @@ public final class AvianDousingCategory implements IRecipeCategory<ChickensJeiRe
         MekanismJeiChemicalHelper.JeiChemicalStack chemical = recipe.chemical();
         if (chemical != null) {
             reagentSlot.addIngredient(chemical.type(), chemical.stack());
+        } else if (recipe.fluid() != null && !recipe.fluid().isEmpty()) {
+            reagentSlot.addIngredient(NeoForgeTypes.FLUID_STACK, recipe.fluid());
         } else {
             reagentSlot.addItemStack(recipe.reagent());
         }
+
+        // INPUT: the base egg/chicken to be dosed
         builder.addSlot(RecipeIngredientRole.INPUT, 58, 52)
                 .addItemStack(recipe.inputEgg())
                 .addItemStack(recipe.inputChicken());
+
+        // OUTPUT: the resulting spawn egg.
+        // This was already present but now all three reagent paths correctly link
+        // their ingredient type so JEI can filter both from input and output focus.
         builder.addSlot(RecipeIngredientRole.OUTPUT, 124, 52)
                 .addItemStack(recipe.result());
     }
@@ -71,23 +80,35 @@ public final class AvianDousingCategory implements IRecipeCategory<ChickensJeiRe
     public void draw(ChickensJeiRecipeTypes.AvianDousingRecipe recipe, IRecipeSlotsView recipeSlotsView,
             GuiGraphics graphics, double mouseX, double mouseY) {
         Component input = Component.translatable("gui.chickens.avian_dousing_machine.input");
-        // Null guard: datapacks or fallback item recipes may omit a chemical entry; show a placeholder instead of crashing.
-        Component chemicalName = recipe.entry() != null
-                ? recipe.entry().getDisplayName()
-                : recipe.reagent().getHoverName();
-        String chemicalId = recipe.entry() != null
-                ? recipe.entry().getChemicalId().toString()
-                : "missing";
-        Component chemical = Component.translatable("gui.chickens.avian_dousing_machine.chemical",
-                chemicalName, chemicalId);
-        Component volume = Component.translatable("gui.chickens.avian_dousing_machine.volume",
-                AvianDousingMachineBlockEntity.CHEMICAL_COST);
-        Component energy = Component.translatable("gui.chickens.avian_dousing_machine.energy",
-                AvianDousingMachineBlockEntity.CHEMICAL_ENERGY_COST);
         int textColor = 0xFF7F7F7F;
         graphics.drawString(Minecraft.getInstance().font, input, 4, 4, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, chemical, 4, 16, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, volume, 4, 28, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, energy, 4, 40, textColor, false);
+
+        // Fluid recipes show amount + energy; chemical recipes show chemical id + volume + energy;
+        // item reagent recipes (dragon breath etc.) show energy only.
+        if (recipe.fluid() != null && !recipe.fluid().isEmpty()) {
+            Component volume = Component.translatable("gui.chickens.avian_dousing_machine.volume",
+                    recipe.fluidCost());
+            Component energy = Component.translatable("gui.chickens.avian_dousing_machine.energy",
+                    recipe.energyCost());
+            graphics.drawString(Minecraft.getInstance().font, volume, 4, 16, textColor, false);
+            graphics.drawString(Minecraft.getInstance().font, energy, 4, 28, textColor, false);
+        } else if (recipe.entry() != null) {
+            Component chemicalName = recipe.entry().getDisplayName();
+            String chemicalId = recipe.entry().getChemicalId().toString();
+            Component chemical = Component.translatable("gui.chickens.avian_dousing_machine.chemical",
+                    chemicalName, chemicalId);
+            Component volume = Component.translatable("gui.chickens.avian_dousing_machine.volume",
+                    AvianDousingMachineBlockEntity.CHEMICAL_COST);
+            Component energy = Component.translatable("gui.chickens.avian_dousing_machine.energy",
+                    AvianDousingMachineBlockEntity.CHEMICAL_ENERGY_COST);
+            graphics.drawString(Minecraft.getInstance().font, chemical, 4, 16, textColor, false);
+            graphics.drawString(Minecraft.getInstance().font, volume, 4, 28, textColor, false);
+            graphics.drawString(Minecraft.getInstance().font, energy, 4, 40, textColor, false);
+        } else {
+            // Special item reagent (dragon breath, nether star)
+            Component energy = Component.translatable("gui.chickens.avian_dousing_machine.energy",
+                    recipe.energyCost());
+            graphics.drawString(Minecraft.getInstance().font, energy, 4, 16, textColor, false);
+        }
     }
 }

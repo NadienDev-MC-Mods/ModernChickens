@@ -6,6 +6,7 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -52,20 +53,23 @@ public final class AvianFluidConverterCategory implements IRecipeCategory<Chicke
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ChickensJeiRecipeTypes.AvianFluidConverterRecipe recipe, IFocusGroup focuses) {
+        // INPUT: the liquid egg item
         builder.addSlot(RecipeIngredientRole.INPUT, 18, 18)
                 .addItemStack(recipe.egg());
+
+        if (!recipe.fluid().isEmpty()) {
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 96, 18)
+                    .addIngredient(NeoForgeTypes.FLUID_STACK, recipe.fluid());
+        }
     }
 
     @Override
     public void draw(ChickensJeiRecipeTypes.AvianFluidConverterRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics,
             double mouseX, double mouseY) {
         FluidStack fluid = recipe.fluid();
-        Component fluidName = fluid.isEmpty()
-                ? Component.translatable("tooltip.chickens.avian_fluid_converter.empty")
-                : fluid.getHoverName();
-        Component amount = Component.translatable("gui.chickens.avian_fluid_converter.amount", fluid.getAmount());
-        int textColor = 0xFF7F7F7F;
-        graphics.drawString(Minecraft.getInstance().font, fluidName, 4, 4, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, amount, 4, 42, textColor, false);
+        if (!fluid.isEmpty()) {
+            Component amount = Component.translatable("gui.chickens.avian_fluid_converter.amount", fluid.getAmount());
+            graphics.drawString(Minecraft.getInstance().font, amount, 4, 42, 0xFF7F7F7F, false);
+        }
     }
 }

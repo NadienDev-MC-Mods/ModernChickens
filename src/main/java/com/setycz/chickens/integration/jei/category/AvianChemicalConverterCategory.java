@@ -2,6 +2,7 @@ package com.setycz.chickens.integration.jei.category;
 
 import com.setycz.chickens.ChemicalEggRegistryItem;
 import com.setycz.chickens.integration.jei.ChickensJeiRecipeTypes;
+import com.setycz.chickens.integration.jei.MekanismJeiChemicalHelper;
 import com.setycz.chickens.registry.ModRegistry;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -54,25 +55,27 @@ public final class AvianChemicalConverterCategory
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ChickensJeiRecipeTypes.AvianChemicalConverterRecipe recipe,
             IFocusGroup focuses) {
+        // INPUT: the chemical/gas egg item
         builder.addSlot(RecipeIngredientRole.INPUT, 18, 18)
                 .addItemStack(recipe.egg());
+
+        MekanismJeiChemicalHelper.JeiChemicalStack chemical =
+                MekanismJeiChemicalHelper.createStack(recipe.entry(), recipe.entry().getVolume());
+        if (chemical != null) {
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 96, 18)
+                    .addIngredient(chemical.type(), chemical.stack());
+        }
     }
 
     @Override
     public void draw(ChickensJeiRecipeTypes.AvianChemicalConverterRecipe recipe, IRecipeSlotsView recipeSlotsView,
             GuiGraphics graphics, double mouseX, double mouseY) {
         ChemicalEggRegistryItem entry = recipe.entry();
-        Component name = entry.getDisplayName();
         Component amount = Component.translatable("gui.chickens.avian_chemical_converter.amount", entry.getVolume());
-        Component state = entry.isGaseous()
-                ? Component.translatable("gui.chickens.avian_chemical_converter.state.gas")
-                : Component.translatable("gui.chickens.avian_chemical_converter.state.chemical");
         Component idLine = Component.translatable("gui.chickens.avian_chemical_converter.chemical",
                 entry.getChemicalId().toString());
         int textColor = 0xFF7F7F7F;
-        graphics.drawString(Minecraft.getInstance().font, name, 4, 4, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, amount, 4, 24, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, state, 4, 34, textColor, false);
-        graphics.drawString(Minecraft.getInstance().font, idLine, 4, 44, textColor, false);
+        graphics.drawString(Minecraft.getInstance().font, amount, 4, 4, textColor, false);
+        graphics.drawString(Minecraft.getInstance().font, idLine, 4, 14, textColor, false);
     }
 }

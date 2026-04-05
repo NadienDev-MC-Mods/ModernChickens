@@ -9,7 +9,8 @@ public enum SpawnType {
     SNOW,
     END,
     NONE,
-    HELL;
+    HELL,
+    ROOSTER;
 
     public static String[] names() {
         SpawnType[] states = values();

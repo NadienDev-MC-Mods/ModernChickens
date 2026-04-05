@@ -38,7 +38,8 @@ public final class ChickensConfigHolder {
             true,                    // gasChickensEnabled
             10_000,                  // incubatorEnergyCost
             100_000,                 // incubatorEnergyCapacity
-            4_000                    // incubatorEnergyMaxReceive
+            4_000,                   // incubatorEnergyMaxReceive
+            64                       // dropCount
     );
 
     private ChickensConfigHolder() {

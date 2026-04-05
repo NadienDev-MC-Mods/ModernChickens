@@ -183,16 +183,23 @@ public final class DefaultChickens {
 
         ChickensRegistryItem goldChicken = new ChickensRegistryItem(
                 300, "GoldChicken", texture("GoldChicken"),
-                new ItemStack(Items.GOLD_NUGGET),
+                new ItemStack(Items.GOLD_INGOT),
                 0xcccc00, 0xffff80,
                 ironChicken, yellowChicken);
         chickens.add(goldChicken);
+
+        ChickensRegistryItem cherryLogChicken = new ChickensRegistryItem(
+                706, "CherryLogChicken", texture("LogChicken"),
+                new ItemStack(Blocks.CHERRY_LOG),
+                0xd9a0a0, 0xb06060,
+                logChicken, pinkChicken);
+        chickens.add(cherryLogChicken);
 
         ChickensRegistryItem snowballChicken = new ChickensRegistryItem(
                 102, "SnowballChicken", texture("SnowballChicken"),
                 new ItemStack(Items.SNOWBALL),
                 0x33bbff, 0x0088cc,
-                blueChicken, logChicken).setSpawnType(SpawnType.SNOW)
+                cherryLogChicken, logChicken).setSpawnType(SpawnType.SNOW)
                 .allowNaturalSpawn();
         chickens.add(snowballChicken);
 
@@ -338,13 +345,6 @@ public final class DefaultChickens {
                 0x7a2020, 0x4a1010,
                 logChicken, redChicken);
         chickens.add(mangroveLogChicken);
-
-        ChickensRegistryItem cherryLogChicken = new ChickensRegistryItem(
-                706, "CherryLogChicken", texture("LogChicken"),
-                new ItemStack(Blocks.CHERRY_LOG),
-                0xd9a0a0, 0xb06060,
-                logChicken, pinkChicken);
-        chickens.add(cherryLogChicken);
 
         ChickensRegistryItem bambooBlockChicken = new ChickensRegistryItem(
                 707, "BambooBlockChicken", texture("LogChicken"),
