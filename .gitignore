@@ -16,7 +16,38 @@ out
 # gradle
 build
 .gradle
-<<<<<<< HEAD
+
+# other
+eclipse
+/run*
+/run/*
+run-data
+run
+
+# Files from Forge MDK
+forge*changelog.txt
+
+.cache
+logs
+
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
 \.gradle
 /.gradle
 \.gradle/*
@@ -25,8 +56,6 @@ build
 /.gradle/*/*
 \.gradle/*/*/*
 /.gradle/*/*/*
-=======
->>>>>>> aa81f32a8633af1b14f4a472a561503cb92c2361
 
 # other
 eclipse
@@ -34,18 +63,14 @@ eclipse
 /run/*
 run-data
 run
-<<<<<<< HEAD
 .bin
 .lock
-=======
->>>>>>> aa81f32a8633af1b14f4a472a561503cb92c2361
 
 # Files from Forge MDK
 forge*changelog.txt
 
 .cache
 logs
-<<<<<<< HEAD
 .gradle/8.9/checksums/checksums.lock
 .gradle/8.9/checksums/checksums.lock
 .gradle/8.9/checksums/checksums.lock
@@ -59,5 +84,3 @@ logs
 .gradle/configuration-cache/configuration-cache.lock
 .gradle/file-system.probe
 .gradle/configuration-cache/configuration-cache.lock
-=======
->>>>>>> aa81f32a8633af1b14f4a472a561503cb92c2361
