@@ -8,11 +8,6 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-/**
- * Centralises the custom JEI recipe types so every category and the plugin
- * reference the same identifiers. Each nested record mirrors one of the
- * virtual recipe layouts shipped with the legacy Forge release.
- */
 public final class ChickensJeiRecipeTypes {
     public static final RecipeType<LayingRecipe> LAYING = RecipeType.create(ChickensMod.MOD_ID, "laying", LayingRecipe.class);
     public static final RecipeType<DropRecipe> DROPS = RecipeType.create(ChickensMod.MOD_ID, "drops", DropRecipe.class);
@@ -30,6 +25,8 @@ public final class ChickensJeiRecipeTypes {
             ChickensMod.MOD_ID, "avian_dousing", AvianDousingRecipe.class);
     public static final RecipeType<IncubatorRecipe> INCUBATOR = RecipeType.create(
             ChickensMod.MOD_ID, "incubator", IncubatorRecipe.class);
+    public static final RecipeType<TeachingRecipe> TEACHING = RecipeType.create(
+            ChickensMod.MOD_ID, "teaching", TeachingRecipe.class);
 
     private ChickensJeiRecipeTypes() {
     }
@@ -72,5 +69,9 @@ public final class ChickensJeiRecipeTypes {
     }
 
     public record IncubatorRecipe(ItemStack spawnEgg, ItemStack chicken, int energyCost) {
+    }
+
+    // book + vanilla chicken → smart chicken, right-click interaction
+    public record TeachingRecipe(ItemStack book, ItemStack vanillaChicken, ItemStack smartChicken) {
     }
 }

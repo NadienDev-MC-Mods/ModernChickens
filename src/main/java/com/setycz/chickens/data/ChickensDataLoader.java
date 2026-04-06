@@ -441,15 +441,25 @@ public final class ChickensDataLoader {
             float layCoefficient = readFloat(props, prefix + "layCoefficient", 1.0f);
             chicken.setLayCoefficient(layCoefficient);
 
-            ItemStack defaultEgg = chicken.createLayItem();
+            // Snapshot the code-defined items BEFORE reading props so stale cfg
+            // values never silently replace what the developer wrote in DefaultChickens.
+            ItemStack codeLayItem = chicken.createLayItem();
+            ItemStack codeDropItem = chicken.createDropItem();
+
             ItemStack layItem = readItemStack(props,
                     prefix + "eggItem",
                     prefix + "eggCount",
                     prefix + "eggType",
-                    defaultEgg);
-            chicken.setLayItem(layItem);
+                    codeLayItem);
+            // Only apply the cfg value if it matches the code-defined item —
+            // if someone manually edited the cfg to a different item, respect that;
+            // otherwise always trust the code.
+            if (layItem.getItem() == codeLayItem.getItem()) {
+                chicken.setLayItem(codeLayItem);
+            } else {
+                chicken.setLayItem(layItem);
+            }
 
-            ItemStack defaultDrop = chicken.createDropItem();
             // Force the persisted default count to 64 when the key is absent so
             // new installs get the intended stack size.  Existing configs that
             // already have a value keep whatever was written there.
@@ -460,8 +470,13 @@ public final class ChickensDataLoader {
                     prefix + "dropItem",
                     prefix + "dropCount",
                     prefix + "dropType",
-                    defaultDrop.isEmpty() ? defaultDrop : new ItemStack(defaultDrop.getItem(), 64));
-            chicken.setDropItem(dropItem);
+                    codeDropItem.isEmpty() ? codeDropItem : new ItemStack(codeDropItem.getItem(), 64));
+            // Same logic: only override if the cfg item differs from code.
+            if (dropItem.getItem() == codeDropItem.getItem()) {
+                chicken.setDropItem(new ItemStack(codeDropItem.getItem(), dropItem.getCount()));
+            } else {
+                chicken.setDropItem(dropItem);
+            }
 
             String parent1 = readString(props, prefix + "parent1", chicken.getParent1() != null ? chicken.getParent1().getEntityName() : "");
             String parent2 = readString(props, prefix + "parent2", chicken.getParent2() != null ? chicken.getParent2().getEntityName() : "");

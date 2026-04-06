@@ -37,12 +37,13 @@ public final class DefaultChickens {
     public static List<ChickensRegistryItem> create() {
         List<ChickensRegistryItem> chickens = new ArrayList<>();
 
-        chickens.add(new ChickensRegistryItem(
+        ChickensRegistryItem smartChicken = new ChickensRegistryItem(
                 com.setycz.chickens.ChickensRegistry.SMART_CHICKEN_ID,
                 "SmartChicken",
                 texture("SmartChicken"),
                 new ItemStack(Items.EGG),
-                0xffffff, 0xffff00).setSpawnType(SpawnType.NONE));
+                0xffffff, 0xffff00).setSpawnType(SpawnType.NONE);
+        chickens.add(smartChicken);
 
         // Configure the base dye chickens to lay the legacy resource items instead of modern dyes.
         ChickensRegistryItem whiteChicken = createDyeChicken(DyeColor.WHITE, "WhiteChicken");
@@ -181,7 +182,7 @@ public final class DefaultChickens {
         brownChicken.setLayItem(new ItemStack(Items.COCOA_BEANS));
         chickens.add(brownChicken);
 
-        ChickensRegistryItem goldChicken = new ChickensRegistryItem(
+         ChickensRegistryItem goldChicken = new ChickensRegistryItem(
                 300, "GoldChicken", texture("GoldChicken"),
                 new ItemStack(Items.GOLD_INGOT),
                 0xcccc00, 0xffff80,
@@ -195,14 +196,6 @@ public final class DefaultChickens {
                 logChicken, pinkChicken);
         chickens.add(cherryLogChicken);
 
-        ChickensRegistryItem snowballChicken = new ChickensRegistryItem(
-                102, "SnowballChicken", texture("SnowballChicken"),
-                new ItemStack(Items.SNOWBALL),
-                0x33bbff, 0x0088cc,
-                cherryLogChicken, logChicken).setSpawnType(SpawnType.SNOW)
-                .allowNaturalSpawn();
-        chickens.add(snowballChicken);
-
         LiquidEggRegistryItem waterLiquid = LiquidEggRegistry.findById(0);
         ItemStack waterEgg = waterLiquid != null
                 ? LiquidEggItem.createFor(waterLiquid)
@@ -213,8 +206,24 @@ public final class DefaultChickens {
                 // correct fluid variant without additional lookups.
                 waterEgg,
                 0x000099, 0x8080ff,
-                gunpowderChicken, snowballChicken);
+                gunpowderChicken, sandChicken);
         chickens.add(waterChicken);
+
+        ChickensRegistryItem iceChicken = new ChickensRegistryItem(
+                710, "IceChicken", texture("SnowballChicken"),
+                new ItemStack(Items.BLUE_ICE),
+                0x99d6ff, 0x4db8ff,
+                waterChicken, smartChicken).setSpawnType(SpawnType.SNOW)
+                .allowNaturalSpawn();
+        chickens.add(iceChicken);
+
+        ChickensRegistryItem snowballChicken = new ChickensRegistryItem(
+                102, "SnowballChicken", texture("SnowballChicken"),
+                new ItemStack(Items.SNOWBALL),
+                0x33bbff, 0x0088cc,
+                whiteChicken, iceChicken).setSpawnType(SpawnType.SNOW)
+                .allowNaturalSpawn();
+        chickens.add(snowballChicken);
 
         LiquidEggRegistryItem lavaLiquid = LiquidEggRegistry.findById(1);
         ItemStack lavaEgg = lavaLiquid != null

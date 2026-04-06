@@ -24,12 +24,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/**
- * Hosts the modern creative mode tab so all ported items remain grouped together
- * just like the legacy release. The display callback inspects the runtime
- * chicken/liquid registries so configuration tweaks immediately reflect in the
- * inventory menu without a restart.
- */
 public final class ModCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB,
             ChickensMod.MOD_ID);
@@ -37,41 +31,61 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = TABS.register("main",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.chickens.main"))
-                    // Spawn eggs are the mod's iconography, so reuse the dynamic egg for the tab icon.
-                    .icon(() -> new ItemStack(ModRegistry.SPAWN_EGG.get()))
+                    .icon(() -> new ItemStack(ModRegistry.CATCHER.get()))
+                    .withSearchBar()
                     .displayItems((parameters, output) -> {
-                        // Utility items first to mirror the original ordering.
+                        // Herramientas
                         output.accept(ModRegistry.ANALYZER.get());
                         output.accept(ModRegistry.CATCHER.get());
+                         output.accept(ModRegistry.CREATIVE_CATCHER.get());
+
+                        // Pollos (chicken item, todos los tipos)
                         for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
                             output.accept(ModRegistry.CHICKEN_ITEM.get().createFor(chicken));
                         }
+
+                        // Máquinas y bloques funcionales
                         output.accept(ModRegistry.ROOST_ITEM.get());
+                        output.accept(ModRegistry.NEST_ITEM.get());
                         output.accept(ModRegistry.BREEDER_ITEM.get());
                         output.accept(ModRegistry.COLLECTOR_ITEM.get());
                         output.accept(ModRegistry.AVIAN_FLUX_CONVERTER_ITEM.get());
                         output.accept(ModRegistry.AVIAN_FLUID_CONVERTER_ITEM.get());
+                        output.accept(ModRegistry.AVIAN_CHEMICAL_CONVERTER_ITEM.get());
+                        output.accept(ModRegistry.AVIAN_DOUSING_MACHINE_ITEM.get());
                         output.accept(ModRegistry.INCUBATOR_ITEM.get());
+
+                        // Gallineros (todas las variantes de madera)
                         for (DeferredItem<BlockItem> item : ModRegistry.getHenhouseItems()) {
                             output.accept(item.get());
                         }
+
+                        // Huevos de spawn y huevos de color
                         for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
                             output.accept(ChickensSpawnEggItem.createFor(chicken));
                             if (chicken.isDye()) {
                                 output.accept(ColoredEggItem.createFor(chicken));
                             }
                         }
+
+                        // Huevo de flux
                         output.accept(ModRegistry.FLUX_EGG.get());
+
+                        // Huevos de fluido (si está habilitado en config)
                         if (ChickensConfigHolder.get().isFluidChickensEnabled()) {
                             for (LiquidEggRegistryItem liquid : LiquidEggRegistry.getAll()) {
                                 output.accept(LiquidEggItem.createFor(liquid));
                             }
                         }
+
+                        // Huevos químicos (si está habilitado en config)
                         if (ChickensConfigHolder.get().isChemicalChickensEnabled()) {
                             for (ChemicalEggRegistryItem chemical : ChemicalEggRegistry.getAll()) {
                                 output.accept(ChemicalEggItem.createFor(chemical));
                             }
                         }
+
+                        // Huevos de gas (si está habilitado en config)
                         if (ChickensConfigHolder.get().isGasChickensEnabled()) {
                             for (ChemicalEggRegistryItem gas : GasEggRegistry.getAll()) {
                                 output.accept(GasEggItem.createFor(gas));

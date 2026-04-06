@@ -1,13 +1,6 @@
 package com.setycz.chickens.registry;
 
-import com.setycz.chickens.ChemicalEggRegistry;
-import com.setycz.chickens.ChemicalEggRegistryItem;
 import com.setycz.chickens.ChickensMod;
-import com.setycz.chickens.ChickensRegistry;
-import com.setycz.chickens.ChickensRegistryItem;
-import com.setycz.chickens.GasEggRegistry;
-import com.setycz.chickens.LiquidEggRegistry;
-import com.setycz.chickens.LiquidEggRegistryItem;
 import com.setycz.chickens.block.AvianChemicalConverterBlock;
 import com.setycz.chickens.block.AvianFluxConverterBlock;
 import com.setycz.chickens.block.AvianDousingMachineBlock;
@@ -24,30 +17,25 @@ import com.setycz.chickens.item.ColoredEggItem;
 import com.setycz.chickens.item.FluxEggItem;
 import com.setycz.chickens.item.ChickenItem;
 import com.setycz.chickens.item.ChickenCatcherItem;
+import com.setycz.chickens.item.CreativeCatcherItem;
 import com.setycz.chickens.item.LiquidEggItem;
 import com.setycz.chickens.item.ChemicalEggItem;
 import com.setycz.chickens.item.GasEggItem;
-import com.setycz.chickens.config.ChickensConfigHolder;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.Unbreakable;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredRegister.Blocks;
 import net.neoforged.neoforge.registries.DeferredRegister.Items;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.bus.api.IEventBus;
 
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Centralised registry bootstrap. The majority of the mod's content will
- * register through these deferred registers to ensure data is ready
- * before the game begins loading worlds.
- */
 public final class ModRegistry {
     public static final Items ITEMS = DeferredRegister.createItems(ChickensMod.MOD_ID);
     public static final Blocks BLOCKS = DeferredRegister.createBlocks(ChickensMod.MOD_ID);
@@ -65,7 +53,6 @@ public final class ModRegistry {
         ModBiomeModifiers.init(modBus);
         ModCapabilities.init(modBus);
         ModCreativeTabs.init(modBus);
-        modBus.addListener(ModRegistry::onBuildCreativeTabs);
     }
 
     public static final DeferredItem<ChickensSpawnEggItem> SPAWN_EGG = ITEMS.register("spawn_egg",
@@ -92,7 +79,6 @@ public final class ModRegistry {
     public static final DeferredBlock<AvianDousingMachineBlock> AVIAN_DOUSING_MACHINE = BLOCKS.register("avian_dousing_machine",
             () -> new AvianDousingMachineBlock());
     public static final DeferredBlock<IncubatorBlock> INCUBATOR = BLOCKS.register("incubator", () -> new IncubatorBlock());
-    // Register the henhouse block and its item form so players can place the storage structure.
     public static final DeferredBlock<HenhouseBlock> HENHOUSE = registerHenhouse("henhouse", MapColor.COLOR_BROWN);
     public static final DeferredBlock<HenhouseBlock> HENHOUSE_SPRUCE = registerHenhouse("henhouse_spruce", MapColor.COLOR_BROWN);
     public static final DeferredBlock<HenhouseBlock> HENHOUSE_BIRCH = registerHenhouse("henhouse_birch", MapColor.COLOR_BROWN);
@@ -136,69 +122,18 @@ public final class ModRegistry {
             () -> new ChickenItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<ChickenCatcherItem> CATCHER = ITEMS.register("catcher",
             () -> new ChickenCatcherItem(new Item.Properties().stacksTo(1).durability(64)));
+    public static final DeferredItem<CreativeCatcherItem> CREATIVE_CATCHER = ITEMS.register("creative_catcher",
+            () -> new CreativeCatcherItem(new Item.Properties().stacksTo(1).component(DataComponents.UNBREAKABLE, new Unbreakable(true))));
 
     public static List<DeferredItem<BlockItem>> getHenhouseItems() {
-        // Expose an immutable view so creative tabs can iterate every variant without
-        // risking accidental modification of the registration list.
         return Collections.unmodifiableList(HENHOUSE_ITEMS);
     }
 
-    private static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
-            for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
-                event.accept(ChickensSpawnEggItem.createFor(chicken));
-            }
-        } else if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
-            for (ChickensRegistryItem chicken : ChickensRegistry.getItems()) {
-                if (chicken.isDye()) {
-                    event.accept(ColoredEggItem.createFor(chicken));
-                }
-            }
-        } else if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            // Surface every henhouse variant so builders can pick the wood tone they prefer.
-            for (DeferredItem<BlockItem> item : HENHOUSE_ITEMS) {
-                event.accept(item.get());
-            }
-            event.accept(ROOST_ITEM.get());
-            event.accept(NEST_ITEM.get());
-            event.accept(BREEDER_ITEM.get());
-            event.accept(COLLECTOR_ITEM.get());
-            event.accept(AVIAN_FLUX_CONVERTER_ITEM.get());
-            event.accept(AVIAN_FLUID_CONVERTER_ITEM.get());
-            event.accept(AVIAN_CHEMICAL_CONVERTER_ITEM.get());
-            event.accept(AVIAN_DOUSING_MACHINE_ITEM.get());
-            event.accept(INCUBATOR_ITEM.get());
-        } else if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(FLUX_EGG.get());
-        } else if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(ANALYZER.get());
-            event.accept(CHICKEN_ITEM.get());
-            event.accept(CATCHER.get());
-            if (ChickensConfigHolder.get().isFluidChickensEnabled()) {
-                for (LiquidEggRegistryItem liquid : LiquidEggRegistry.getAll()) {
-                    event.accept(LiquidEggItem.createFor(liquid));
-                }
-            }
-            if (ChickensConfigHolder.get().isChemicalChickensEnabled()) {
-                for (ChemicalEggRegistryItem chemical : ChemicalEggRegistry.getAll()) {
-                    event.accept(ChemicalEggItem.createFor(chemical));
-                }
-            }
-            if (ChickensConfigHolder.get().isGasChickensEnabled()) {
-                for (ChemicalEggRegistryItem gas : GasEggRegistry.getAll()) {
-                    event.accept(GasEggItem.createFor(gas));
-                }
-            }
-        }
-    }
-
     private static DeferredBlock<HenhouseBlock> registerHenhouse(String name, MapColor color) {
-        // Each variant reuses the same block logic while keeping the tint configurable per wood type.
         return BLOCKS.register(name, () -> new HenhouseBlock(color));
     }
 
     private static DeferredItem<BlockItem> registerHenhouseItem(String name, DeferredBlock<HenhouseBlock> block) {
-        // Pair the block with a simple BlockItem so the creative menu and recipes have tangible entries.
         return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 }

@@ -139,14 +139,14 @@ public final class LegacyConfigBridge {
                 writer.write(String.format(Locale.ROOT, "    B:enabled=%s%n", getBoolean(props, prefix + "enabled", true)));
                 writer.write(String.format(Locale.ROOT, "    D:layCoefficient=%s%n", getString(props, prefix + "layCoefficient", "1.0")));
                 writer.write(String.format(Locale.ROOT, "    S:spawnType=%s%n", getString(props, prefix + "spawnType", chicken.getSpawnType().name())));
-            writer.write(String.format(Locale.ROOT, "    B:allowNaturalSpawn=%s%n", getBoolean(props, prefix + "allowNaturalSpawn", chicken.hasNaturalSpawnOverride())));
-            writer.write(String.format(Locale.ROOT, "    S:parent1=%s%n", getString(props, prefix + "parent1", chicken.getParent1() != null ? chicken.getParent1().getEntityName() : "")));
-            writer.write(String.format(Locale.ROOT, "    S:parent2=%s%n", getString(props, prefix + "parent2", chicken.getParent2() != null ? chicken.getParent2().getEntityName() : "")));
+            // Always write these fields from the in-memory chicken definition so
+            // stale props from a previously deleted cfg never overwrite code changes.
+            writer.write(String.format(Locale.ROOT, "    B:allowNaturalSpawn=%s%n", chicken.hasNaturalSpawnOverride()));
+            writer.write(String.format(Locale.ROOT, "    S:parent1=%s%n", chicken.getParent1() != null ? chicken.getParent1().getEntityName() : ""));
+            writer.write(String.format(Locale.ROOT, "    S:parent2=%s%n", chicken.getParent2() != null ? chicken.getParent2().getEntityName() : ""));
             writer.write(String.format(Locale.ROOT, "    I:liquidDousingCost=%d%n", getInt(props, prefix + "liquidDousingCost", chicken.getLiquidDousingCost())));
 
             writeItemEntry(writer, props, prefix, "egg", chicken.createLayItem());
-            // Use getDropItem() (the already-configured stack with count=64 default)
-            // instead of createDropItem() which returns the hardcoded count=1 default.
             writeItemEntry(writer, props, prefix, "drop", chicken.createDropItem());
 
                 writer.write("}\n\n");
@@ -280,7 +280,9 @@ public final class LegacyConfigBridge {
         String countKey = prefix + kind + "Count";
         String metaKey = prefix + kind + "Type";
 
-        String itemId = getString(props, itemKey, getItemId(stack));
+        // Always derive the item id from the stack passed in — never from props —
+        // so code-defined changes (e.g. GoldChicken lay=gold_ingot) are always written.
+        String itemId = getItemId(stack);
         // For drop entries always use the configured dropCount — never carry over
         // stale values from the legacy file (many old configs had count=1).
         // Egg entries read the stored value or fall back to the stack count.
