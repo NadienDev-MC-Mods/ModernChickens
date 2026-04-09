@@ -130,12 +130,6 @@ public final class ChickensRegistry {
         if (biomeHolder.is(Tags.Biomes.IS_SNOWY)) {
             return SpawnType.SNOW;
         }
-        if (biomeHolder.is(Tags.Biomes.IS_PLAINS)
-                || biomeHolder.is(Tags.Biomes.IS_FOREST)
-                || biomeHolder.is(Tags.Biomes.IS_SAVANNA)
-                || biomeHolder.is(Tags.Biomes.IS_DRY)) {
-            return SpawnType.ROOSTER;
-        }
         return SpawnType.NORMAL;
     }
 
