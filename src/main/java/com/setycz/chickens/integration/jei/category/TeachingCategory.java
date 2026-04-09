@@ -18,7 +18,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class TeachingCategory implements IRecipeCategory<ChickensJeiRecipeTypes.TeachingRecipe> {
+    // Reutilizamos la misma textura de fondo que LayingCategory
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ChickensMod.MOD_ID, "textures/gui/laying.png");
+    // El icono es el propio item del libro; no necesitamos una textura separada.
     private static final ResourceLocation ICON_TEXTURE = ResourceLocation.fromNamespaceAndPath(ChickensMod.MOD_ID, "textures/gui/laying_icon.png");
 
     private final IDrawable background;
@@ -54,10 +56,13 @@ public class TeachingCategory implements IRecipeCategory<ChickensJeiRecipeTypes.
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ChickensJeiRecipeTypes.TeachingRecipe recipe, IFocusGroup focuses) {
+        // Slot 1: el ítem trigger (libro, tarta, grass_block, etc.)
         builder.addSlot(RecipeIngredientRole.INPUT, 5, 19)
                 .addItemStack(recipe.book());
+        // Slot 2: la gallina vanilla (spawn egg)
         builder.addSlot(RecipeIngredientRole.INPUT, 24, 19)
                 .addItemStack(recipe.vanillaChicken());
+        // Slot OUTPUT: el ChickenItem resultante (imagen del pollo, NO el huevo)
         builder.addSlot(RecipeIngredientRole.OUTPUT, 57, 19)
                 .addItemStack(recipe.smartChicken());
     }

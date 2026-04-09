@@ -491,24 +491,26 @@ final class ModdedChickens {
                 "richSlagChicken", "DiamondChicken", null));
 
         list.add(new Definition(548, "signalumChicken", "thermal_foundation/signalum_chicken",
-                oreTag("ingots", "signalum"),
+                combine(tag("c:ingots/signalum", "forge:ingots/signalum"),
+                         item("alltheores:signalum_ingot")),
                 0xffa424, 0xc63200, SpawnType.NONE,
                 "copperchicken", "silverorechicken", null));
 
         list.add(new Definition(549, "enderiumChicken", "thermal_foundation/enderium_chicken",
-                combine(oreTag("ingots", "enderium"),
-                        oreTag("nuggets", "enderium")),
+                combine(tag("c:ingots/enderium", "forge:ingots/enderium"),
+                         item("alltheores:enderium_ingot")),
                 0x127575, 0x0a4849, SpawnType.NONE,
                 "platinumchicken", "EnderChicken", null));
 
         list.add(new Definition(550, "iridiumChicken", "thermal_foundation/iridium_chicken",
-                combine(oreTag("ingots", "iridium"),
-                        oreTag("nuggets", "iridium")),
+                combine(tag("c:ingots/iridium", "forge:ingots/iridium"),
+                         item("alltheores:iridium_ingot")),
                 0xedebf1, 0xbbbcdd, SpawnType.NONE,
                 "enderiumChicken", "blizzRodChicken", null));
 
         list.add(new Definition(551, "lumiumChicken", "thermal_foundation/lumium_chicken",
-                oreTag("ingots", "lumium"),
+                combine(tag("c:ingots/lumium", "forge:ingots/lumium"),
+                         item("alltheores:lumium_ingot")),
                 0xeef4df, 0xf4b134, SpawnType.NONE,
                 "tinchicken", "GlowstoneChicken", null));
 
@@ -799,6 +801,87 @@ final class ModdedChickens {
                 item("ultimatefoods:steel_ingot"),
                 0x1f402c, 0x62ff7d, SpawnType.NONE,
                 "CoalChicken", "LogChicken", null));
+
+        // Excessive Utilities
+        list.add(new Definition(617, "demonChicken", "excessive_utilities/demon_chicken",
+                item("excessive_utilities:demon_ingot"),
+                0x5c0000, 0xff2200, SpawnType.HELL,
+                "NetheriteChicken", "BlazeChicken", null));
+
+        list.add(new Definition(618, "lunarReactiveDustChicken", "excessive_utilities/lunar_reactive_dust_chicken",
+                item("excessive_utilities:lunar_reactive_dust"),
+                0xc8d4f0, 0xf5f0ff, SpawnType.NONE,
+                "GlowstoneChicken", "WhiteChicken", null));
+
+        list.add(new Definition(619, "moonStoneChicken", "excessive_utilities/moon_stone_chicken",
+                item("excessive_utilities:moon_stone"),
+                0xb8c8e8, 0xe8eeff, SpawnType.NONE,
+                "lunarReactiveDustChicken", "QuartzChicken", null));
+
+        list.add(new Definition(620, "bedrockiumChicken", "excessive_utilities/bedrockium_chicken",
+                item("excessive_utilities:bedrockium_ingot"),
+                0x2a2a2a, 0x6b6b6b, SpawnType.NONE,
+                "demonChicken", "obsidianChicken", null));
+
+        // Ars Nouveau
+        list.add(new Definition(621, "sourceGemChicken", "ars_nouveau/source_gem_chicken",
+                combine(item("ars_nouveau:source_gem"),
+                        tag("c:gems/source_gem", "forge:gems/source_gem")),
+                0x9b59ff, 0xe0c4ff, SpawnType.NONE,
+                "amethystChicken", "GlowstoneChicken", null));
+
+        // Extended Crafting
+        list.add(new Definition(622, "blackIronChicken", "extended_crafting/black_iron_chicken",
+                combine(item("extendedcrafting:black_iron_ingot"),
+                        tag("c:ingots/black_iron", "forge:ingots/black_iron")),
+                0x1a1a1a, 0x4a4a5a, SpawnType.NONE,
+                "IronChicken", "obsidianChicken", null));
+
+        // Botany Pots
+        list.add(new Definition(623, "terracottaHopperPotChicken", "botanypots/terracotta_hopper_pot_chicken",
+                item("botanypots:terracotta_hopper_botany_pot"),
+                0xb05028, 0xe07a4f, SpawnType.NONE,
+                "ClayChicken", "RedstoneChicken", null));
+
+        // chickenNosto – obtenido por right-click con una tarta (pie)
+        list.add(new Definition(624, "chickenNosto", "vanilla/chicken_nosto",
+                () -> Optional.of(new ItemStack(Items.CAKE)),
+                0xf5c27f, 0xfff0c8, SpawnType.NONE,
+                "YellowChicken", "BrownChicken", null));
+
+        // americanChicken – obtenido por right-click con un grass_block (enseñanza)
+        list.add(new Definition(625, "americanChicken", "vanilla/american_chicken",
+                () -> Optional.of(new ItemStack(Blocks.GRASS_BLOCK)),
+                0x59b83a, 0x8b5c2a, SpawnType.NONE,
+                "GreenChicken", "BrownChicken", null));
+
+        // Vanilla extras
+        // Fragmentos del silencio (Warden shards)
+        list.add(new Definition(626, "echoShardChicken", "vanilla/echo_shard_chicken",
+                () -> Optional.of(new ItemStack(Items.ECHO_SHARD)),
+                0x00c8c8, 0x004444, SpawnType.NONE,
+                "obsidianChicken", "CyanChicken", null));
+
+        // Cristales del End (End Crystal)
+        list.add(new Definition(627, "endCrystalChicken", "vanilla/end_crystal_chicken",
+                () -> Optional.of(new ItemStack(Items.END_CRYSTAL)),
+                0xcc00cc, 0xff66ff, SpawnType.NONE,
+                "EnderChicken", "pCrystalChicken", null));
+
+        // Puertas (Oak Door como representante; drop usa tagDrop c:wooden_doors)
+        list.add(new Definition(628, "doorChicken", "vanilla/door_chicken",
+                combine(
+                        tag("c:wooden_doors", "c:doors"),
+                        () -> Optional.of(new ItemStack(Items.OAK_DOOR))),
+                0x9a6c3a, 0xc89a5a, SpawnType.NONE,
+                "LogChicken", "IronChicken",
+                tagDrop("c:wooden_doors", "c:doors")));
+
+        // Dirt chicken – teaching mechanic: right-click vanilla chicken with Dirt
+        list.add(new Definition(629, "dirtChicken", "vanilla/dirt_chicken",
+                () -> Optional.of(new ItemStack(Blocks.DIRT)),
+                0x8b5c2a, 0x5c3d1e, SpawnType.NONE,
+                "americanChicken", "ClayChicken", null));
 
 
         return list;

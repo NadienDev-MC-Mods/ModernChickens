@@ -29,10 +29,17 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import com.setycz.chickens.item.ChickenItem;
+import com.setycz.chickens.item.ChickenItemHelper;
+import com.setycz.chickens.registry.ModRegistry;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -329,6 +336,94 @@ public class ChickensChicken extends Chicken {
             return 10;
         }
         return value;
+    }
+
+    // ── Interaction (right-click) ──────────────────────────────────────────────
+    // Priority order:
+    //   1. Teaching trigger items  → transform this vanilla chicken into a named breed
+    //      (only works on vanilla chickens, i.e. type == 0 / SmartChicken)
+    //   2. Empty hand on any custom ChickensChicken → pick it up as a ChickenItem
+    //   3. Anything else falls through to vanilla (feeding wheat seeds, etc.)
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack held = player.getItemInHand(hand);
+        Level level = this.level();
+
+        // ── 1. Teaching: transform a vanilla/smart chicken into a breed ──────
+        if (!level.isClientSide) {
+            ChickensRegistryItem targetBreed = resolveTeachingTarget(held);
+            if (targetBreed != null) {
+                // Only transform if this mob is currently a SmartChicken (type == SmartChicken id)
+                // or a plain vanilla chicken (type 0). Custom breeds are already specialised.
+                ChickensRegistryItem current = this.getChickenDescription();
+                boolean isSmartOrVanilla = current == null
+                        || current == ChickensRegistry.getSmartChicken()
+                        || current.getId() == 0;
+                if (isSmartOrVanilla) {
+                    this.setChickenType(targetBreed.getId());
+                    this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, 1.0F);
+                    if (!player.getAbilities().instabuild) {
+                        held.shrink(1);
+                    }
+                    return InteractionResult.CONSUME;
+                }
+            }
+        }
+
+        // ── 2. Pickup: Catcher / Creative Catcher → ChickenItem ──────────────
+        boolean isNormalCatcher   = held.is(ModRegistry.CATCHER.get());
+        boolean isCreativeCatcher = held.is(ModRegistry.CREATIVE_CATCHER.get());
+        if (isNormalCatcher || isCreativeCatcher) {
+            ChickensRegistryItem description = this.getChickenDescription();
+            if (description != null && !level.isClientSide) {
+                ChickenItem chickenItem = (ChickenItem) ModRegistry.CHICKEN_ITEM.get();
+                ItemStack stack = chickenItem.createFor(description);
+                // Creative Catcher → máximo 10/10/10; Catcher normal → base 1/1/1
+                ChickenStats stats = isCreativeCatcher
+                        ? new ChickenStats(10, 10, 10, true)
+                        : new ChickenStats(1, 1, 1, false);
+                ChickenItemHelper.setStats(stack, stats);
+                player.addItem(stack);
+                this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, 1.0F);
+                // Gastar durabilidad del Catcher normal (el Creative es unbreakable)
+                if (isNormalCatcher && !player.getAbilities().instabuild) {
+                    held.hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+                }
+                this.discard();
+                return InteractionResult.CONSUME;
+            }
+        }
+
+        return super.mobInteract(player, hand);
+    }
+
+    /**
+     * Maps a held ItemStack to the chicken breed it should teach.
+     * Add new teaching mappings here — one item → one ChickensRegistryItem.
+     * Returns {@code null} if the item is not a teaching trigger.
+     */
+    @Nullable
+    private static ChickensRegistryItem resolveTeachingTarget(ItemStack held) {
+        if (held.isEmpty()) {
+            return null;
+        }
+        // Book → SmartChicken (the base teaching recipe)
+        if (held.is(Items.BOOK)) {
+            return ChickensRegistry.getSmartChicken();
+        }
+        // Cake → chickenNosto
+        if (held.is(Items.CAKE)) {
+            return ChickensRegistry.getByEntityName("chickenNosto");
+        }
+        // Grass Block → americanChicken
+        if (held.is(Blocks.GRASS_BLOCK.asItem())) {
+            return ChickensRegistry.getByEntityName("americanChicken");
+        }
+        // Dirt → dirtChicken
+        if (held.is(Blocks.DIRT.asItem())) {
+            return ChickensRegistry.getByEntityName("dirtChicken");
+        }
+        return null;
     }
 
     @Override

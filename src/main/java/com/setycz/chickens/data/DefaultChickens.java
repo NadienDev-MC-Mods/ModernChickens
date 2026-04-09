@@ -41,9 +41,17 @@ public final class DefaultChickens {
                 com.setycz.chickens.ChickensRegistry.SMART_CHICKEN_ID,
                 "SmartChicken",
                 texture("SmartChicken"),
-                new ItemStack(Items.EGG),
+                new ItemStack(Items.BOOK),
                 0xffffff, 0xffff00).setSpawnType(SpawnType.NONE);
         chickens.add(smartChicken);
+
+        ChickensRegistryItem vanillaChicken = new ChickensRegistryItem(
+                33, "VanillaChicken", texture("VanillaChicken"),
+                new ItemStack(Items.EGG),
+                0xffffff, 0xffaa00).setSpawnType(SpawnType.NONE);
+        // vanillaChicken.setLayItem(new ItemStack(Items.EGG));
+        // vanillaChicken.setDropItem(new ItemStack(Items.EGG));
+        chickens.add(vanillaChicken);
 
         // Configure the base dye chickens to lay the legacy resource items instead of modern dyes.
         ChickensRegistryItem whiteChicken = createDyeChicken(DyeColor.WHITE, "WhiteChicken");

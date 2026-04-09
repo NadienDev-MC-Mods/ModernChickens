@@ -434,7 +434,7 @@ public final class ChickensDataLoader {
 
         Map<ChickensRegistryItem, ParentNames> parentOverrides = new HashMap<>();
         for (ChickensRegistryItem chicken : chickens) {
-            String prefix = "chicken." + chicken.getEntityName() + ".";
+            String prefix = "chicken." + chicken.getEntityName().toLowerCase(java.util.Locale.ROOT) + ".";
             boolean enabled = readBoolean(props, prefix + "enabled", chicken.isEnabled());
             chicken.setEnabled(enabled);
 

@@ -12,13 +12,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
+import javax.annotation.Nullable;
+
 /**
- * Listens for players teaching vanilla chickens using a book. The handler
- * now performs a strict 1:1 conversion that always consumes the book and
- * replaces the interacted chicken with a smart chicken entity.
+ * Listens for players teaching vanilla chickens using a trigger item.
+ * Each item maps to a target breed; the vanilla chicken is replaced with
+ * the corresponding ChickensChicken entity and the item is consumed.
  */
 public final class ChickenTeachHandler {
     private ChickenTeachHandler() {
@@ -30,7 +33,8 @@ public final class ChickenTeachHandler {
 
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         ItemStack stack = event.getItemStack();
-        if (!stack.is(Items.BOOK)) {
+        ChickensRegistryItem targetBreed = resolveTeachingTarget(stack);
+        if (targetBreed == null) {
             return;
         }
         Player player = event.getEntity();
@@ -41,33 +45,54 @@ public final class ChickenTeachHandler {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        ChickensRegistryItem smartChickenData = ChickensRegistry.getSmartChicken();
-        if (smartChickenData == null || !smartChickenData.isEnabled()) {
+        if (!targetBreed.isEnabled()) {
             return;
         }
         BlockPos blockPos = chicken.blockPosition();
-        ChickensChicken smartChicken = ModEntityTypes.CHICKENS_CHICKEN.get().create(serverLevel);
-        if (smartChicken == null) {
+        ChickensChicken newChicken = ModEntityTypes.CHICKENS_CHICKEN.get().create(serverLevel);
+        if (newChicken == null) {
             return;
         }
-        smartChicken.moveTo(chicken.getX(), chicken.getY(), chicken.getZ(), chicken.getYRot(), chicken.getXRot());
-        smartChicken.setYHeadRot(chicken.getYHeadRot());
-        smartChicken.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(blockPos), MobSpawnType.CONVERSION, null);
-        // Reset the descriptor after spawn so the neo spawn hooks cannot randomise the chicken type.
-        smartChicken.setChickenType(smartChickenData.getId());
-        smartChicken.setAge(chicken.getAge());
+        newChicken.moveTo(chicken.getX(), chicken.getY(), chicken.getZ(), chicken.getYRot(), chicken.getXRot());
+        newChicken.setYHeadRot(chicken.getYHeadRot());
+        newChicken.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(blockPos), MobSpawnType.CONVERSION, null);
+        newChicken.setChickenType(targetBreed.getId());
+        newChicken.setAge(chicken.getAge());
         if (chicken.hasCustomName()) {
-            smartChicken.setCustomName(chicken.getCustomName());
-            smartChicken.setCustomNameVisible(chicken.isCustomNameVisible());
+            newChicken.setCustomName(chicken.getCustomName());
+            newChicken.setCustomNameVisible(chicken.isCustomNameVisible());
         }
-        serverLevel.addFreshEntity(smartChicken);
-        smartChicken.spawnAnim();
+        serverLevel.addFreshEntity(newChicken);
+        newChicken.spawnAnim();
         chicken.discard();
         if (!player.getAbilities().instabuild) {
-            // Consume the teaching book so every conversion remains a deliberate 1:1 action.
             stack.shrink(1);
         }
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
+    }
+
+    /**
+     * Maps a held ItemStack to the chicken breed it should teach on a vanilla chicken.
+     * Returns {@code null} if the item is not a teaching trigger.
+     */
+    @Nullable
+    private static ChickensRegistryItem resolveTeachingTarget(ItemStack held) {
+        if (held.isEmpty()) {
+            return null;
+        }
+        if (held.is(Items.BOOK)) {
+            return ChickensRegistry.getSmartChicken();
+        }
+        if (held.is(Items.CAKE)) {
+            return ChickensRegistry.getByEntityName("chickenNosto");
+        }
+        if (held.is(Blocks.GRASS_BLOCK.asItem())) {
+            return ChickensRegistry.getByEntityName("americanChicken");
+        }
+        if (held.is(Blocks.DIRT.asItem())) {
+            return ChickensRegistry.getByEntityName("dirtChicken");
+        }
+        return null;
     }
 }

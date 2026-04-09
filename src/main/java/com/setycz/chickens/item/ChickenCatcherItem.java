@@ -1,8 +1,12 @@
 package com.setycz.chickens.item;
 
+import com.setycz.chickens.ChickensRegistry;
+import com.setycz.chickens.ChickensRegistryItem;
 import com.setycz.chickens.entity.ChickensChicken;
 import com.setycz.chickens.entity.Rooster;
 import com.setycz.chickens.registry.ModRegistry;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.item.Items;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -34,6 +38,32 @@ public class ChickenCatcherItem extends Item {
 
         if (entity instanceof Rooster rooster) {
             return catchRooster(stack, player, hand, level, position, rooster);
+        }
+
+        // Pollo vanilla de Minecraft → VanillaChicken item con stats 1/1/1
+        if (entity instanceof Chicken && !(entity instanceof ChickensChicken)) {
+            if (entity.isBaby()) {
+                spawnParticles(level, position, true);
+                playSound(level, position, SoundEvents.CHICKEN_HURT);
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+            if (level instanceof ServerLevel serverLevel) {
+                ChickensRegistryItem vanillaDesc = ChickensRegistry.getByEntityName("VanillaChicken");
+                if (vanillaDesc != null) {
+                    ItemStack chickenStack = new ItemStack(ModRegistry.CHICKEN_ITEM.get());
+                    ChickenItemHelper.setChickenType(chickenStack, vanillaDesc.getId());
+                    ChickenItemHelper.setStats(chickenStack, new ChickenStats(1, 1, 1, false));
+                    serverLevel.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(
+                            serverLevel, position.x, position.y + 0.2D, position.z, chickenStack));
+                    entity.discard();
+                    spawnParticles(level, position, false);
+                    playSound(level, position, SoundEvents.CHICKEN_EGG);
+                    EquipmentSlot slot = hand == InteractionHand.MAIN_HAND
+                            ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+                    stack.hurtAndBreak(1, player, slot);
+                }
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         if (!(entity instanceof ChickensChicken chicken)) {

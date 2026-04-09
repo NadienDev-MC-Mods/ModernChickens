@@ -396,17 +396,49 @@ public class ChickensJeiPlugin implements IModPlugin {
                 AvianDousingMachineBlockEntity.SPECIAL_ENERGY_COST);
     }
 
-    // Una sola receta: libro + gallina vanilla (spawn egg) → smart chicken item
+    // Recetas de teaching: libro+gallina vanilla → smart chicken, y right-click con item especial → pollo especial
     private static List<ChickensJeiRecipeTypes.TeachingRecipe> buildTeachingRecipes() {
         ChickensRegistryItem smartChicken = ChickensRegistry.getSmartChicken();
         if (smartChicken == null || !smartChicken.isEnabled()) {
             return List.of();
         }
         ChickenItem chickenItem = (ChickenItem) ModRegistry.CHICKEN_ITEM.get();
-        return List.of(new ChickensJeiRecipeTypes.TeachingRecipe(
+        List<ChickensJeiRecipeTypes.TeachingRecipe> list = new ArrayList<>();
+
+        // Receta base: libro + gallina vanilla → smart chicken
+        list.add(new ChickensJeiRecipeTypes.TeachingRecipe(
                 new ItemStack(Items.BOOK),
                 new ItemStack(Items.CHICKEN_SPAWN_EGG),
                 chickenItem.createFor(smartChicken)));
+
+        // chickenNosto: tarta de calabaza + gallina vanilla → chickenNosto
+        ChickensRegistryItem nostoChicken = ChickensRegistry.getByEntityName("chickenNosto");
+        if (nostoChicken != null && nostoChicken.isEnabled()) {
+            list.add(new ChickensJeiRecipeTypes.TeachingRecipe(
+                    new ItemStack(Items.CAKE),
+                    new ItemStack(Items.CHICKEN_SPAWN_EGG),
+                    chickenItem.createFor(nostoChicken)));
+        }
+
+        // americanChicken: grass_block + gallina vanilla → americanChicken
+        ChickensRegistryItem americanChicken = ChickensRegistry.getByEntityName("americanChicken");
+        if (americanChicken != null && americanChicken.isEnabled()) {
+            list.add(new ChickensJeiRecipeTypes.TeachingRecipe(
+                    new ItemStack(Blocks.GRASS_BLOCK),
+                    new ItemStack(Items.CHICKEN_SPAWN_EGG),
+                    chickenItem.createFor(americanChicken)));
+        }
+
+        // dirtChicken: dirt + gallina vanilla → dirtChicken
+        ChickensRegistryItem dirtChicken = ChickensRegistry.getByEntityName("dirtChicken");
+        if (dirtChicken != null && dirtChicken.isEnabled()) {
+            list.add(new ChickensJeiRecipeTypes.TeachingRecipe(
+                    new ItemStack(Blocks.DIRT),
+                    new ItemStack(Items.CHICKEN_SPAWN_EGG),
+                    chickenItem.createFor(dirtChicken)));
+        }
+
+        return list;
     }
 
     private static List<ItemStack> buildHenhouseCatalysts() {
