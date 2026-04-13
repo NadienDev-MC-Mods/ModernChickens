@@ -417,7 +417,13 @@ public final class ChickensDataLoader {
                         Optional.empty(),
                         0xff9ad7,
                         FluidType.BUCKET_VOLUME,
-                        EnumSet.of(LiquidEggRegistryItem.HazardFlag.MAGICAL))
+                        EnumSet.of(LiquidEggRegistryItem.HazardFlag.MAGICAL)),
+                new LiquidEggDefinition(15,
+                        id("industrialforegoing", "ether_gas"),
+                        Optional.empty(),
+                        0xff9ad7,
+                        FluidType.BUCKET_VOLUME,
+                        EnumSet.of(LiquidEggRegistryItem.HazardFlag.TOXIC))
         );
 
         private static ResourceLocation id(String namespace, String path) {

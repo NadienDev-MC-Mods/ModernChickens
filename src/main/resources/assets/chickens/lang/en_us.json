@@ -337,5 +337,9 @@
   "entity.echoShardChicken.name": "Echo Shard Chicken",
   "entity.endCrystalChicken.name": "End Crystal Chicken",
   "entity.doorChicken.name": "Door Chicken",
-  "entity.dirtChicken.name": "Dirt Chicken"
+  "entity.dirtChicken.name": "Dirt Chicken",
+  "entity.andesitechicken.name": "Andesite Alloy Chicken",
+  "entity.chocolatchicken.name": "Chocolate Chicken",
+  "entity.crystalmatrixChicken.name": "Crystal Matrix Chicken",
+  "entity.ethergasChicken.name": "Ether Gas Chicken"
 }

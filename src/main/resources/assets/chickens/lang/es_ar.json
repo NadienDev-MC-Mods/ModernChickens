@@ -15,8 +15,8 @@
   "gui.throws": "Lanzamiento de Huevo de Color",
   "gui.henhousing": "Subproducto del Gallinero",
   "gui.chickens.incubator": "Incubadora",
-  "gui.chickens.teaching": "Enseñanza",
-"gui.chickens.teaching.hint": "Clic derecho en una gallina",
+  "gui.chickens.teaching": "Enseñanza de Pollos",
+  "gui.chickens.teaching.hint": "Click derecho a un pollo con el ítem",
   "item.chickens.spawn_egg": "Huevo de Aparición de Pollo",
   "item.chickens.spawn_egg.named": "Huevo de Aparición de %s",
   "item.chickens.spawn_egg.tooltip": "Nivel %s",
@@ -324,8 +324,6 @@
   "commands.chickens.export.failure": "Error al exportar el gráfico de cría. Revisa los registros del servidor.",
   "config.jade.plugin_chickens.chickens_chicken": "Pollo",
   "config.jade.plugin_chickens.hud_overlay": "Overlay HUD de Pollos",
-  "gui.chickens.teaching": "Enseñanza de Pollos",
-  "gui.chickens.teaching.hint": "Click derecho a un pollo con el ítem",
   "entity.steelchckennChicken.name": "Pollo de Acero",
   "entity.demonChicken.name": "Pollo de Lingote Demoníaco",
   "entity.lunarReactiveDustChicken.name": "Pollo de Polvo Lunar Reactivo",
@@ -339,5 +337,9 @@
   "entity.echoShardChicken.name": "Pollo de Fragmento del Eco",
   "entity.endCrystalChicken.name": "Pollo de Cristal del End",
   "entity.doorChicken.name": "Pollo de Puerta",
-  "entity.dirtChicken.name": "Pollo de Tierra"
+  "entity.dirtChicken.name": "Pollo de Tierra",
+  "entity.andesitechicken.name": "Pollo de Aleación de Andesita",
+  "entity.chocolatchicken.name": "Pollo de Chocolate",
+  "entity.crystalmatrixChicken.name": "Pollo de Matriz de Cristal",
+  "entity.ethergasChicken.name": "Pollo de Gas Éter"
 }

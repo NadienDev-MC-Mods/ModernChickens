@@ -245,13 +245,17 @@ final class ModdedChickens {
                 liquidEgg(14),
                 0xff9ad7, 0xffc5e9, SpawnType.NONE,
                 "latexChicken", "SlimeChicken", null));
+        list.add(new Definition(630, "ethergasChicken", "industrial_foregoing/ether_gas_chicken",
+                liquidEgg(15),
+                0xff9ad7, 0xffc5e9, SpawnType.NONE,
+                "latexChicken", "witherChicken", null));
 
         // Draconic Evolution
         list.add(new Definition(505, "draconiumChicken", "draconic/draconium_chicken",
                 combine(oreTag("ingots", "draconium"),
                         item("draconicevolution:draconium_ingot")),
                 0x301549, 0x1a0c27, SpawnType.NONE,
-                "GunpowderChicken", "EnderChicken", null));
+                "GunpowderChicken", "EnderChicken", tagDrop("c:ingots/draconium", "forge:ingots/draconium")));
 
         list.add(new Definition(506, "draconiumAwakenedChicken", "draconic/draconium_awakened_chicken",
                 combine(oreTag("ingots", "awakened_draconium"),
@@ -259,79 +263,79 @@ final class ModdedChickens {
                         oreTag("nuggets", "awakened_draconium"),
                         item("draconicevolution:awakened_draconium_ingot")),
                 0xcc440c, 0x9c691a, SpawnType.NONE,
-                "draconiumChicken", "EnderChicken", null));
+                "draconiumChicken", "EnderChicken", tagDrop("c:ingots/awakened_draconium", "c:ingots/draconium_awakened", "forge:ingots/awakened_draconium", "forge:ingots/draconium_awakened")));
 
         // Botania
         list.add(new Definition(507, "manasteelchicken", "botania/manasteel_chicken",
                 combine(item("botania:manasteel_ingot"),
                         oreTag("ingots", "manasteel")),
                 0x69d7ff, 0x002c4b, SpawnType.NONE,
-                "IronChicken", "GhastChicken", null));
+                "IronChicken", "GhastChicken", tagDrop("c:ingots/manasteel", "forge:ingots/manasteel")));
 
         list.add(new Definition(508, "terrasteelchicken", "botania/terrasteel_chicken",
                 combine(item("botania:terrasteel_ingot"),
                         oreTag("ingots", "terrasteel")),
                 0x3ff123, 0xf5fcf1, SpawnType.NONE,
-                "EnderChicken", "pCrystalChicken", null));
+                "EnderChicken", "pCrystalChicken", tagDrop("c:ingots/terrasteel", "forge:ingots/terrasteel")));
 
         list.add(new Definition(509, "elementiumchicken", "botania/elementium_chicken",
                 combine(item("botania:elementium_ingot"),
                         oreTag("ingots", "elementium")),
                 0xf655f3, 0xb407b7, SpawnType.NONE,
-                "manasteelchicken", "terrasteelchicken", null));
+                "manasteelchicken", "terrasteelchicken", tagDrop("c:ingots/elementium", "forge:ingots/elementium")));
 
         // Base metals (ore dictionary style)
-        list.add(new Definition(510, "copperchicken", "basemetals/copper_chicken",
+        list.add(new Definition(510, "copperchicken", "alltheores/copper_chicken",
                 oreTag("ingots", "copper"),
                 0xc06a48, 0xff9d76, SpawnType.NONE,
-                "YellowChicken", "BrownChicken", null));
+                "YellowChicken", "BrownChicken", tagDrop("c:ingots/copper", "forge:ingots/copper")));
 
-        list.add(new Definition(511, "tinchicken", "basemetals/tin_chicken",
+        list.add(new Definition(511, "tinchicken", "alltheores/tin_chicken",
                 oreTag("ingots", "tin"),
                 0xfff7ee, 0xbbb1a7, SpawnType.NONE,
-                "WhiteChicken", "ClayChicken", null));
+                "WhiteChicken", "ClayChicken", tagDrop("c:ingots/tin", "forge:ingots/tin")));
 
-        list.add(new Definition(512, "zincchicken", "basemetals/zinc_chicken",
+        list.add(new Definition(512, "zincchicken", "alltheores/zinc_chicken",
                 oreTag("ingots", "zinc"),
                 0xb7b7b7, 0x868686, SpawnType.NONE,
-                "WhiteChicken", "ClayChicken", null));
+                "WhiteChicken", "ClayChicken", tagDrop("c:ingots/zinc", "forge:ingots/zinc")));
 
-        list.add(new Definition(513, "leadchicken", "basemetals/lead_chicken",
+        list.add(new Definition(513, "leadchicken", "alltheores/lead_chicken",
                 oreTag("ingots", "lead"),
                 0x777777, 0x383838, SpawnType.NONE,
-                "IronChicken", "CyanChicken", null));
+                "IronChicken", "CyanChicken", tagDrop("c:ingots/lead", "forge:ingots/lead")));
 
-        list.add(new Definition(514, "nickelchicken", "basemetals/nickel_chicken",
+        list.add(new Definition(514, "nickelchicken", "alltheores/nickel_chicken",
                 oreTag("ingots", "nickel"),
                 0xefffec, 0xa2b69f, SpawnType.NONE,
-                "WhiteChicken", "GreenChicken", null));
+                "WhiteChicken", "GreenChicken", tagDrop("c:ingots/nickel", "forge:ingots/nickel")));
 
-        list.add(new Definition(515, "silverorechicken", "basemetals/silver_chicken",
+        list.add(new Definition(515, "silverorechicken", "alltheores/silver_chicken",
                 oreTag("ingots", "silver"),
                 0xbebebe, 0xffffff, SpawnType.NONE,
-                "IronChicken", "WhiteChicken", null));
+                "IronChicken", "WhiteChicken", tagDrop("c:ingots/silver", "forge:ingots/silver")));
 
-        list.add(new Definition(516, "platinumchicken", "basemetals/platinum_chicken",
+        list.add(new Definition(516, "platinumchicken", "alltheores/platinum_chicken",
                 oreTag("ingots", "platinum"),
                 0xffffff, 0x8d9a96, SpawnType.NONE,
-                "nickelchicken", "silverorechicken", null));
+                "nickelchicken", "silverorechicken", tagDrop("c:ingots/platinum", "forge:ingots/platinum")));
 
-        list.add(new Definition(517, "invarchicken", "basemetals/invar_chicken",
+        list.add(new Definition(517, "invarchicken", "alltheores/invar_chicken",
                 oreTag("ingots", "invar"),
                 0x989585, 0xd1ccb6, SpawnType.NONE,
-                "IronChicken", "nickelchicken", null));
+                "IronChicken", "nickelchicken", tagDrop("c:ingots/invar", "forge:ingots/invar")));
 
-        list.add(new Definition(518, "bronzechicken", "basemetals/bronze_chicken",
+        list.add(new Definition(518, "bronzechicken", "alltheores/bronze_chicken",
                 oreTag("ingots", "bronze"),
                 0x9a6731, 0xf6a44e, SpawnType.NONE,
-                "copperchicken", "tinchicken", null));
+                "copperchicken", "tinchicken", tagDrop("c:ingots/bronze", "forge:ingots/bronze")));
 
-        list.add(new Definition(519, "steelchicken", "basemetals/steel_chicken",
+        list.add(new Definition(519, "steelchicken", "alltheores/steel_chicken",
                 oreTag("ingots", "steel"),
                 0xd3e1e3, 0x8e9799, SpawnType.NONE,
-                "IronChicken", "CoalChicken", null));
+                "IronChicken", "CoalChicken", tagDrop("c:ingots/steel", "forge:ingots/steel")));
 
-        list.add(new Definition(520, "siliconchicken", "basemetals/silicon_chicken",
+        list.add(new Definition(520, "siliconchicken", "alltheores/silicon_chicken",
                 combine(tag("forge:silicon", "c:silicon"),
                         oreTag("gems", "silicon"),
                         oreTag("dusts", "silicon")),
@@ -339,185 +343,196 @@ final class ModdedChickens {
                 "ClayChicken", "SandChicken",
                 tagDrop("c:silicon", "c:gems/silicon", "c:dusts/silicon")));
 
-        list.add(new Definition(521, "sulfurchicken", "basemetals/sulfur_chicken",
+        list.add(new Definition(521, "sulfurchicken", "alltheores/sulfur_chicken",
                 combine(oreTag("dusts", "sulfur"),
                         oreTag("gems", "sulfur")),
                 0xffe782, 0xad9326, SpawnType.NONE,
                 "GunpowderChicken", "FlintChicken",
                 tagDrop("c:dusts/sulfur", "c:gems/sulfur")));
 
-        list.add(new Definition(522, "saltpeterchicken", "basemetals/saltpeter_chicken",
+        list.add(new Definition(522, "saltpeterchicken", "alltheores/saltpeter_chicken",
                 combine(oreTag("dusts", "saltpeter"),
                         oreTag("dusts", "niter")),
                 0xddd6d6, 0xac9e9d, SpawnType.NONE,
                 "sulfurchicken", "RedstoneChicken",
                 tagDrop("c:dusts/saltpeter", "c:dusts/niter")));
-
-        list.add(new Definition(523, "brasschicken", "basemetals/brass_chicken",
-                oreTag("ingots", "brass"),
+        // Create
+        list.add(new Definition(523, "brasschicken", "create/brass_chicken",
+                combine(oreTag("ingots", "brass"),
+                        item("create:brass_ingot")),
                 0xa99340, 0xffe377, SpawnType.NONE,
-                "copperchicken", "zincchicken", null));
+                "copperchicken", "zincchicken", tagDrop("c:ingots/brass", "forge:ingots/brass")));
 
-        list.add(new Definition(524, "cupronickelchicken", "basemetals/cupronickel_chicken",
+        list.add(new Definition(630, "andesitealloychicken", "create/andesite_chicken",
+                combine(oreTag("ingots", "andesite"),
+                        item("create:andesite_alloy")),
+                0xa99340, 0xffe377, SpawnType.NONE,
+                "copperchicken", "zincchicken", tagDrop("c:ingots/andesite", "forge:ingots/andesite")));
+        list.add(new Definition(631, "chocolatchicken", "create/chocolat_chicken",
+                        item("create:chocolate"),
+                0xa99340, 0xffe377, SpawnType.NONE,
+                "brasschicken", "witherChicken", null));
+
+        list.add(new Definition(524, "cupronickelchicken", "alltheores/cupronickel_chicken",
                 oreTag("ingots", "cupronickel"),
                 0xd8ccb4, 0x98896c, SpawnType.NONE,
-                "copperchicken", "nickelchicken", null));
+                "copperchicken", "nickelchicken", tagDrop("c:ingots/cupronickel", "forge:ingots/cupronickel")));
 
-        list.add(new Definition(525, "electrumchicken", "basemetals/electrum_chicken",
+        list.add(new Definition(525, "electrumchicken", "alltheores/electrum_chicken",
                 oreTag("ingots", "electrum"),
                 0xfff2b1, 0xd4be50, SpawnType.NONE,
-                "silverorechicken", "GoldChicken", null));
+                "silverorechicken", "GoldChicken", tagDrop("c:ingots/electrum", "forge:ingots/electrum")));
 
-        list.add(new Definition(526, "aluminumChicken", "basemetals/aluminium_chicken",
+        list.add(new Definition(526, "aluminumChicken", "alltheores/aluminium_chicken",
                 combine(oreTag("ingots", "aluminum"),
                         oreTag("ingots", "aluminium")),
                 0xd3dddc, 0xcbd7d6, SpawnType.NONE,
-                "FlintChicken", "IronChicken", null));
+                "FlintChicken", "IronChicken", tagDrop("c:ingots/aluminum", "c:ingots/aluminium", "forge:ingots/aluminum", "forge:ingots/aluminium")));
 
         // Mekanism
         list.add(new Definition(527, "osmiumChicken", "mekanism/osmium_chicken",
                 combine(oreTag("ingots", "osmium"),
                         item("mekanism:ingot_osmium")),
                 0x989585, 0xd1ccb6, SpawnType.NONE,
-                "IronChicken", "QuartzChicken", null));
+                "IronChicken", "QuartzChicken", tagDrop("c:ingots/osmium", "forge:ingots/osmium")));
 
         // Immersive Engineering
         list.add(new Definition(528, "uraniumChicken", "immersive_engineering/uranium_chicken",
                 oreTag("ingots", "uranium"),
                 0x91d76d, 0x9ce26c, SpawnType.NONE,
-                "RedstoneChicken", "EnderChicken", null));
+                "RedstoneChicken", "EnderChicken", tagDrop("c:ingots/uranium", "forge:ingots/uranium")));
 
         list.add(new Definition(529, "constantanChicken", "immersive_engineering/consrtantan_chicken",
                 oreTag("ingots", "constantan"),
                 0xf98669, 0x795851, SpawnType.NONE,
-                "copperchicken", "nickelchicken", null));
+                "copperchicken", "nickelchicken", tagDrop("c:ingots/constantan", "forge:ingots/constantan")));
 
         // Extreme Reactors
         list.add(new Definition(530, "yelloriumChicken", "extreme_reactors/yellorium_chicken",
                 oreTag("ingots", "yellorium"),
                 0xa5b700, 0xd7ef00, SpawnType.NONE,
-                "GlowstoneChicken", "EnderChicken", null));
+                "GlowstoneChicken", "EnderChicken", tagDrop("c:ingots/yellorium", "forge:ingots/yellorium")));
 
         list.add(new Definition(531, "graphiteChicken", "extreme_reactors/graphite_chicken",
                 combine(oreTag("ingots", "graphite"),
                         oreTag("dusts", "graphite"),
                         oreTag("gems", "graphite")),
                 0x41453f, 0x595959, SpawnType.NONE,
-                "CoalChicken", "BlackChicken", null));
+                "CoalChicken", "BlackChicken", tagDrop("c:ingots/graphite", "forge:ingots/graphite", "c:dusts/graphite", "forge:dusts/graphite")));
 
         list.add(new Definition(532, "cyaniteChicken", "extreme_reactors/cyanite_chicken",
                 oreTag("ingots", "cyanite"),
                 0x0068b4, 0x5cafdb, SpawnType.NONE,
-                "yelloriumChicken", "SandChicken", null));
+                "yelloriumChicken", "SandChicken", tagDrop("c:ingots/cyanite", "forge:ingots/cyanite")));
 
         list.add(new Definition(533, "blutoniumChicken", "extreme_reactors/blutonium_chicken",
                 oreTag("ingots", "blutonium"),
                 0x4642d6, 0xf5fcf1, SpawnType.NONE,
-                "cyaniteChicken", "WaterChicken", null));
+                "cyaniteChicken", "WaterChicken", tagDrop("c:ingots/blutonium", "forge:ingots/blutonium")));
 
         // Ender IO
         list.add(new Definition(534, "electricalSteelChicken", "enderio/electrical_steel_chicken",
                 oreTag("ingots", "electrical_steel"),
                 0x939393, 0x474747, SpawnType.NONE,
-                "IronChicken", "siliconchicken", null));
+                "IronChicken", "siliconchicken", tagDrop("c:ingots/electrical_steel", "forge:ingots/electrical_steel")));
 
         list.add(new Definition(535, "energeticAlloyChicken", "enderio/energetic_alloy_chicken",
                 oreTag("ingots", "energetic_alloy"),
                 0xea6c05, 0x65321b, SpawnType.NONE,
-                "GoldChicken", "GlowstoneChicken", null));
+                "GoldChicken", "GlowstoneChicken", tagDrop("c:ingots/energetic_alloy", "forge:ingots/energetic_alloy")));
 
         list.add(new Definition(536, "vibrantAlloyChicken", "enderio/vibrant_alloy_chicken",
                 oreTag("ingots", "vibrant_alloy"),
                 0xbcf239, 0x779c1d, SpawnType.NONE,
-                "energeticAlloyChicken", "EnderChicken", null));
+                "energeticAlloyChicken", "EnderChicken", tagDrop("c:ingots/vibrant_alloy", "forge:ingots/vibrant_alloy")));
 
         list.add(new Definition(537, "redstoneAlloyChicken", "enderio/redstone_alloy_chicken",
                 oreTag("ingots", "redstone_alloy"),
                 0xd03939, 0x621919, SpawnType.NONE,
-                "RedstoneChicken", "siliconchicken", null));
+                "RedstoneChicken", "siliconchicken", tagDrop("c:ingots/redstone_alloy", "forge:ingots/redstone_alloy")));
 
         list.add(new Definition(538, "conductiveIronChicken", "enderio/conductive_iron_chicken",
                 oreTag("ingots", "conductive_iron"),
                 0xcc9d96, 0x7e6764, SpawnType.NONE,
-                "RedstoneChicken", "IronChicken", null));
+                "RedstoneChicken", "IronChicken", tagDrop("c:ingots/conductive_iron", "forge:ingots/conductive_iron")));
 
         list.add(new Definition(539, "pulsatingIronChicken", "enderio/pulsating_iron_chicken",
                 oreTag("ingots", "pulsating_iron"),
                 0x6fe78b, 0x406448, SpawnType.NONE,
-                "IronChicken", "EnderChicken", null));
+                "IronChicken", "EnderChicken", tagDrop("c:ingots/pulsating_iron", "forge:ingots/pulsating_iron")));
 
         list.add(new Definition(540, "darkSteelChicken", "enderio/dark_steel_chicken",
                 oreTag("ingots", "dark_steel"),
                 0x4d4d4e, 0x242424, SpawnType.NONE,
-                "IronChicken", "obsidianChicken", null));
+                "IronChicken", "obsidianChicken", tagDrop("c:ingots/dark_steel", "forge:ingots/dark_steel")));
 
         list.add(new Definition(541, "soulariumChicken", "enderio/soularium_chicken",
                 oreTag("ingots", "soularium"),
                 0x6f5c36, 0x4e371a, SpawnType.NONE,
-                "soulSandChicken", "GoldChicken", null));
+                "soulSandChicken", "GoldChicken", tagDrop("c:ingots/soularium", "forge:ingots/soularium")));
 
         // Thermal Foundation
-        list.add(new Definition(542, "slagChicken", "thermal_foundation/slag_chicken",
+        list.add(new Definition(542, "slagChicken", "alltheores/slag_chicken",
                 combine(oreTag("dusts", "slag"),
                         item("thermal:slag")),
                 0x83715e, 0x443b31, SpawnType.NONE,
                 "RedstoneChicken", "IronChicken", null));
 
-        list.add(new Definition(543, "richSlagChicken", "thermal_foundation/rich_slag_chicken",
+        list.add(new Definition(543, "richSlagChicken", "alltheores/rich_slag_chicken",
                 combine(oreTag("dusts", "rich_slag"),
                         item("thermal:rich_slag")),
                 0x5b3f20, 0x3d2915, SpawnType.NONE,
                 "slagChicken", "slagChicken", null));
 
-        list.add(new Definition(544, "basalzRodChicken", "thermal_foundation/basalz_rod_chicken",
+        list.add(new Definition(544, "basalzRodChicken", "alltheores/basalz_rod_chicken",
                 oreTag("rods", "basalz"),
                 0x980000, 0x6e6664, SpawnType.NONE,
                 "saltpeterchicken", "BlazeChicken", null));
 
-        list.add(new Definition(545, "blitzRodChicken", "thermal_foundation/blitz_rod_chicken",
+        list.add(new Definition(545, "blitzRodChicken", "alltheores/blitz_rod_chicken",
                 oreTag("rods", "blitz"),
                 0xece992, 0x66e5ef, SpawnType.NONE,
                 "basalzRodChicken", "sulfurchicken", null));
 
-        list.add(new Definition(546, "blizzRodChicken", "thermal_foundation/blizz_rod_chicken",
+        list.add(new Definition(546, "blizzRodChicken", "alltheores/blizz_rod_chicken",
                 oreTag("rods", "blizz"),
                 0x88e0ff, 0x1d3b95, SpawnType.NONE,
                 "blitzRodChicken", "SnowballChicken", null));
 
-        list.add(new Definition(547, "cinnabarChicken", "thermal_foundation/cinnabar_chicken",
+        list.add(new Definition(547, "cinnabarChicken", "alltheores/cinnabar_chicken",
                 combine(oreTag("gems", "cinnabar"),
                         oreTag("dusts", "cinnabar")),
                 0xe49790, 0x9b3229, SpawnType.NONE,
                 "richSlagChicken", "DiamondChicken", null));
 
-        list.add(new Definition(548, "signalumChicken", "thermal_foundation/signalum_chicken",
+        list.add(new Definition(548, "signalumChicken", "alltheores/signalum_chicken",
                 combine(tag("c:ingots/signalum", "forge:ingots/signalum"),
                          item("alltheores:signalum_ingot")),
                 0xffa424, 0xc63200, SpawnType.NONE,
-                "copperchicken", "silverorechicken", null));
+                "copperchicken", "silverorechicken", tagDrop("c:ingots/signalum", "forge:ingots/signalum")));
 
-        list.add(new Definition(549, "enderiumChicken", "thermal_foundation/enderium_chicken",
+        list.add(new Definition(549, "enderiumChicken", "alltheores/enderium_chicken",
                 combine(tag("c:ingots/enderium", "forge:ingots/enderium"),
                          item("alltheores:enderium_ingot")),
                 0x127575, 0x0a4849, SpawnType.NONE,
-                "platinumchicken", "EnderChicken", null));
+                "platinumchicken", "EnderChicken", tagDrop("c:ingots/enderium", "forge:ingots/enderium")));
 
-        list.add(new Definition(550, "iridiumChicken", "thermal_foundation/iridium_chicken",
+        list.add(new Definition(550, "iridiumChicken", "alltheores/iridium_chicken",
                 combine(tag("c:ingots/iridium", "forge:ingots/iridium"),
                          item("alltheores:iridium_ingot")),
                 0xedebf1, 0xbbbcdd, SpawnType.NONE,
-                "enderiumChicken", "blizzRodChicken", null));
+                "enderiumChicken", "blizzRodChicken", tagDrop("c:ingots/iridium", "forge:ingots/iridium")));
 
-        list.add(new Definition(551, "lumiumChicken", "thermal_foundation/lumium_chicken",
+        list.add(new Definition(551, "lumiumChicken", "alltheores/lumium_chicken",
                 combine(tag("c:ingots/lumium", "forge:ingots/lumium"),
                          item("alltheores:lumium_ingot")),
                 0xeef4df, 0xf4b134, SpawnType.NONE,
-                "tinchicken", "GlowstoneChicken", null));
+                "tinchicken", "GlowstoneChicken", tagDrop("c:ingots/lumium", "forge:ingots/lumium")));
 
-        list.add(new Definition(552, "mithrilChicken", "thermal_foundation/mithril_chicken",
+        list.add(new Definition(552, "mithrilChicken", "alltheores/mithril_chicken",
                 oreTag("ingots", "mithril"),
                 0x5a89a8, 0xa7ffff, SpawnType.NONE,
-                "iridiumChicken", "GoldChicken", null));
+                "iridiumChicken", "GoldChicken", tagDrop("c:ingots/mithril", "forge:ingots/mithril")));
 
         // Specialty resource chickens (Better Mod Integration task). Mapped resources:
         // Amethyst → minecraft:amethyst_shard | Blood → evilcraft:bucket_blood | Fluorite → mekanism:fluorite_gem/fluorite
@@ -643,12 +658,12 @@ final class ModdedChickens {
         list.add(new Definition(585, "entroChicken", "extended_ae/entro_chicken",
                 combine(tag("c:ingots/entro"), item("extendedae:entro_ingot")),
                 0x2c1f40, 0x7d62b8, SpawnType.NONE,
-                "ae2FluixChicken", "certusQuartzChicken", null));
+                "ae2FluixChicken", "certusQuartzChicken", tagDrop("c:ingots/entro", "forge:ingots/entro")));
 
         list.add(new Definition(586, "quantumAlloyChicken", "advanced_ae/quantum_alloy_chicken",
                 combine(tag("c:ingots/quantum_alloy"), item("advanced_ae:quantum_alloy")),
                 0x2f7e9f, 0x8bf0ff, SpawnType.NONE,
-                "ae2FluixChicken", "entroChicken", null));
+                "ae2FluixChicken", "entroChicken", tagDrop("c:ingots/quantum_alloy", "forge:ingots/quantum_alloy")));
 
         list.add(new Definition(587, "fluxNetworkChicken", "fluxnetworks/flux_chicken",
                 combine(tag("c:dusts/flux"), item("fluxnetworks:flux_dust", "fluxnetworks:flux")),
@@ -669,15 +684,15 @@ final class ModdedChickens {
                 "BlazeChicken", "certusQuartzChicken", null));
 
         // Boss-tier chickens crafted via the Avian Dousing Machine special infusions.
-        list.add(new Definition(590, "dragonChicken", "boss/dragon_chicken",
-                () -> Optional.of(new ItemStack(Items.DRAGON_EGG)),
-                0x4b2a7c, 0x9f7be0, SpawnType.NONE,
-                null, null, null));
-
         list.add(new Definition(591, "witherChicken", "boss/wither_chicken",
                 () -> Optional.of(new ItemStack(Items.NETHER_STAR)),
                 0x1b1b1b, 0xababab, SpawnType.NONE,
                 null, null, null));
+        list.add(new Definition(590, "dragonChicken", "boss/dragon_chicken",
+                () -> Optional.of(new ItemStack(Items.DRAGON_EGG)),
+                0x4b2a7c, 0x9f7be0, SpawnType.NONE,
+                "witherChicken", "uraniumChicken", null));
+
 
         // Actually Additions crystal chickens
         list.add(new Definition(592, "blackQuartzChicken", "actually_additions/black_quartz_chicken",
@@ -719,7 +734,7 @@ final class ModdedChickens {
 
         // Additional late-game mod resources and gaps in default coverage
         list.add(new Definition(600, "neutroniumChicken", "avaritia/neutronium_chicken",
-                item("avaritia:neutron_pile"),
+                item("avaritia:neutron_ingot"),
                 0xa6a6b4, 0x5f6173, SpawnType.NONE,
                 "witherChicken", "DiamondChicken", null));
 
@@ -727,6 +742,10 @@ final class ModdedChickens {
                 item("avaritia:infinity_ingot"),
                 0xf4e3a1, 0x7cf7ff, SpawnType.NONE,
                 "neutroniumChicken", "dragonChicken", null));
+        list.add(new Definition(632, "crystalmatrixChicken", "avaritia/crystal_matrix_chicken",
+                item("avaritia:crystal_matrix_ingot"),
+                0xf4e3a1, 0x7cf7ff, SpawnType.NONE,
+                "witherChicken", "dragonChicken", null));
 
         list.add(new Definition(602, "hdpePelletChicken", "mekanism/hdpe_pellet_chicken",
                 item("mekanism:hdpe_pellet"),
@@ -835,7 +854,7 @@ final class ModdedChickens {
                 combine(item("extendedcrafting:black_iron_ingot"),
                         tag("c:ingots/black_iron", "forge:ingots/black_iron")),
                 0x1a1a1a, 0x4a4a5a, SpawnType.NONE,
-                "IronChicken", "obsidianChicken", null));
+                "IronChicken", "obsidianChicken", tagDrop("c:ingots/black_iron", "forge:ingots/black_iron")));
 
         // Botany Pots
         list.add(new Definition(623, "terracottaHopperPotChicken", "botanypots/terracotta_hopper_pot_chicken",
@@ -876,6 +895,7 @@ final class ModdedChickens {
                 0x9a6c3a, 0xc89a5a, SpawnType.NONE,
                 "LogChicken", "IronChicken",
                 tagDrop("c:wooden_doors", "c:doors")));
+                
 
         // Dirt chicken – teaching mechanic: right-click vanilla chicken with Dirt
         list.add(new Definition(629, "dirtChicken", "vanilla/dirt_chicken",
