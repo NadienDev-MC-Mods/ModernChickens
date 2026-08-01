@@ -1,8 +1,0 @@
-{
-    "parent": "block/orientable",
-    "textures": {
-        "top": "chickens:blocks/henhouse_top_jungle",
-        "front": "chickens:blocks/henhouse_front_jungle",
-        "side": "chickens:blocks/henhouse_side_jungle"
-    }
-}

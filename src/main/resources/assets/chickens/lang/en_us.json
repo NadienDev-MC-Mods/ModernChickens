@@ -62,7 +62,7 @@
   "item.chickens.incubator": "Incubator",
   "container.chickens.henhouse": "Henhouse",
   "container.chickens.incubator": "Incubator",
-  "tooltip.chickens.henhouse": "Collects eggs from nearby chickens when supplied with hay bales.",
+  "tooltip.chickens.henhouse": "Collects eggs from nearby chickens when supplied with hay bales or FE.",
   "tooltip.chickens.avian_flux_converter": "Charges Flux Eggs into a buffered RF supply.",
   "tooltip.chickens.avian_chemical_converter": "Cracks Chemical and Gas Eggs into a buffered chemical tank.",
   "tooltip.chickens.avian_chemical_converter.empty": "Stored Chemical: Empty",

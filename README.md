@@ -49,6 +49,10 @@ Modern Chickens is a NeoForge port of the classic Chickens and Roost mods for Mi
 - **Actually Additions** — Black Quartz, Restonia, Diamatine, Emeradic, Enori, Palis, Void crystals.
 - **Vanilla** — Amethyst (Amethyst Shard), Nether Stars, Dragon Eggs
 
+## Henhouse
+
+The Henhouse collects nearby chicken drops into its internal inventory. It accepts hay bales or FE from any standard energy provider; each unit of charge collects one item, and spent hay becomes dirt. Outputs can be extracted from below by normal item automation.
+
 ## Boss Chickens via Avian Dousing (Dragon / Wither)
 You cannot breed these; you must infuse them in the **Avian Dousing Machine**.
 
@@ -155,7 +159,8 @@ Combining the Dousing Machine with the Fluid and Chemical Converters lets you go
 Roosters are utility birds inspired by Hatchery’s rooster: they never lay eggs themselves, but they store seeds and power nearby roosts when paired with nests.
 
 - **Behaviour**: Roosters use chicken AI (wandering, following food, panic) but keep their internal egg timer above the lay threshold, so they never produce eggs directly.
-- **Seed storage**: Right-clicking a rooster opens a small inventory where you can feed it seeds (anything tagged as `#minecraft:chicken_food`). Internally the rooster converts pairs of seeds into a lightweight “seed charge” used for GUIs and future breeding logic.
+- **Breeding**: A charged adult rooster seeks a nearby adult chicken, spends two seed-charge points, and fertilizes it. The hen determines the offspring, so vanilla hens produce vanilla chicks and Modern Chickens retain their normal breeding/stat rules.
+- **Seed storage**: Right-clicking a rooster opens a small inventory where you can feed it seeds (anything tagged as `#minecraft:chicken_food`). Internally the rooster converts pairs of seeds into the charge used for breeding.
 - **Item form**: Using the Chicken Catcher on a rooster turns it into a specialised chicken item marked as a rooster. That item can be placed back into the world as a rooster, or dropped into a Nest to contribute aura.
 - **Roost synergy**: Roosts scan the area around them for active nests. Each rooster in an active nest adds a production bonus on top of the base roost speed.
 
@@ -351,12 +356,9 @@ Example datapack snippet that boosts overworld chicken density while limiting fl
 
 Reloading datapacks (or restarting the server) automatically reapplies these overrides; removing the JSON restores the configuration defaults.
 
-Global spawn helpers are also configurable via [chickens.cfg](https://github.com/STRHercules/ModernChickens/blob/main/Examples/Config/chickens.cfg):
+Natural spawning uses each biome's normal creature pool and shared creature cap. Modern Chickens are added only to biomes that already spawn vanilla chickens; vanilla chicken entries are left unchanged for compatibility with biome and creature-spawn mods. Modern birds use smaller default broods (1-2), while roosters spawn alone at low weight.
 
-- `general.overworldSpawnChance` (default `0.02`) controls the chance per check that the overworld spawn helper runs.
-- `general.netherSpawnChance` (default `0.05`) works alongside `netherSpawnChanceMultiplier` to determine Nether burst frequency.
-- `general.endSpawnChance` (default `0.015`) controls the forced spawns used in The End.
-These values accept floats between `0` and `1`; set them lower for rarer spawns or increase them if you want denser testing without relying on the debug multiplier.
+The legacy `overworldSpawnChance`, `netherSpawnChance`, and `endSpawnChance` configuration keys are retained so existing configs still load, but no longer force player-adjacent spawns.
 
 For on-the-fly testing, `/chickens spawn multiplier <value>` multiplies every biome weight (set back to `1` to restore defaults) and `/chickens spawn debug <true|false>` toggles chat spam that reports each natural chicken spawn with its breed and coordinates.
 When you need an immediate test subject, `/chickens spawn summon <chickenNameOrId>` spawns that breed at your feet and `/chickens spawn summon_random [normal|snow|end|hell]` picks a random chicken from the requested biome bucket.

@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:builtin/entity",
-  "textures": {
-    "layer0": "chickens:item/spawn_egg",
-    "layer1": "chickens:item/spawn_egg_overlay"
-  }
-}

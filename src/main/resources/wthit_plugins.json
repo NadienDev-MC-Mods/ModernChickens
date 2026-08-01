@@ -1,5 +1,5 @@
 {
   "chickens:wthit": {
-    "initializer": "com.setycz.chickens.integration.wthit.ChickensWthitPlugin"
+    "initializer": "strhercules.chickens.integration.wthit.ChickensWthitPlugin"
   }
 }
